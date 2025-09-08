@@ -207,12 +207,30 @@ std::string Protocol::recv_buy_car() {
 }
 
 std::pair<Car, uint32_t> Protocol::recv_car_bought() {
-    Car car = recv_current_car(); // reutilizamos la lógica
+    // Primero leemos la info del auto
+    uint16_t name_length;
+    socket.recvall(&name_length, sizeof(name_length));
+    name_length = big_endian_to_host_16(name_length);
     
+    std::string name(name_length, '\0');
+    socket.recvall(&name[0], name_length);
+    
+    uint16_t year;
+    socket.recvall(&year, sizeof(year));
+    year = big_endian_to_host_16(year);
+    
+    uint32_t price;
+    socket.recvall(&price, sizeof(price));
+    price = big_endian_to_host_32(price);
+    
+    Car car(name, year, price);
+    
+    // Luego leemos el dinero restante
     uint32_t remaining_money;
     socket.recvall(&remaining_money, sizeof(remaining_money));
     remaining_money = big_endian_to_host_32(remaining_money);
     
+    return std::make_pair(car, remaining_money);
     return std::make_pair(car, remaining_money);
 }
 
