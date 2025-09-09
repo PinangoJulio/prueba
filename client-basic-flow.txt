@@ -1,0 +1,6 @@
+username Alice
+get_current_car
+get_market
+buy_car FordFocus
+get_current_car
+buy_car ToyotaCorolla

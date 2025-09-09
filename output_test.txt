@@ -1,0 +1,548 @@
+-------------------------
+julio@julio-VirtualBox:~/Escritorio/Taller prueba/sockets-2025c2-PinangoJulio$ ./compare_outputs.sh casos/ salidas/
+
+Se compararan los archivos *obtenidos* con los *esperados*.
+Si se encuentran diferencias, estas se mostraran tal que:
+ - las lineas prefijadas con '-' provienen del archivo *obtenido* (tuyo);
+ - las prefijadas con '+' son del archivo *esperado* (el correcto).
+
+-------------------------
+[=>] Comparando 01_test_send_username/client_0_AtoB.dump...
+--- casos//01_test_send_username/client_0_AtoB.dump     1969-12-31 21:00:00.000000000 -0300
++++ salidas//01_test_send_username/client_0_AtoB.dump   2025-08-30 19:04:55.000000000 -0300
+@@ -0,0 +1 @@
++010005416c696365
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 01_test_send_username/client_0_BtoA.dump...
+--- casos//01_test_send_username/client_0_BtoA.dump     1969-12-31 21:00:00.000000000 -0300
++++ salidas//01_test_send_username/client_0_BtoA.dump   2025-08-30 19:04:55.000000000 -0300
+@@ -0,0 +1 @@
++0200003a98
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 01_test_send_username/__client_0_ret__...
+[=>] Comparando 01_test_send_username/__client_0_stdout__...
+--- casos//01_test_send_username/__client_0_stdout__    2025-09-08 14:27:38.178126251 -0300
++++ salidas//01_test_send_username/__client_0_stdout__  2025-08-30 19:04:55.000000000 -0300
+@@ -0,0 +1 @@
++Initial balance: 15000
+
+
+[=>] Comparando 01_test_send_username/__server_ret__...
+--- casos//01_test_send_username/__server_ret__ 1969-12-31 21:00:00.000000000 -0300
++++ salidas//01_test_send_username/__server_ret__       2025-08-30 19:04:55.000000000 -0300
+@@ -0,0 +1 @@
++0
+
+
+[=>] Comparando 01_test_send_username/__server_stdout__...
+--- casos//01_test_send_username/__server_stdout__      1969-12-31 21:00:00.000000000 -0300
++++ salidas//01_test_send_username/__server_stdout__    2025-08-30 19:04:55.000000000 -0300
+@@ -0,0 +1,3 @@
++Server started
++Hello, Alice
++Initial balance: 15000
+
+
+
+-------------------------
+[=>] Comparando 02_test_buy_car/client_0_AtoB.dump...
+--- casos//02_test_buy_car/client_0_AtoB.dump   1969-12-31 21:00:00.000000000 -0300
++++ salidas//02_test_buy_car/client_0_AtoB.dump 2025-08-30 19:04:55.000000000 -0300
+@@ -0,0 +1,2 @@
++0100064d616e64696507000d546f796f
++7461436f726f6c6c61
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 02_test_buy_car/client_0_BtoA.dump...
+--- casos//02_test_buy_car/client_0_BtoA.dump   1969-12-31 21:00:00.000000000 -0300
++++ salidas//02_test_buy_car/client_0_BtoA.dump 2025-08-30 19:04:55.000000000 -0300
+@@ -0,0 +1,2 @@
++0200003a9808000d546f796f7461436f
++726f6c6c6107e200124f8000000bb8
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 02_test_buy_car/__client_0_ret__...
+[=>] Comparando 02_test_buy_car/__client_0_stdout__...
+--- casos//02_test_buy_car/__client_0_stdout__  2025-09-08 14:27:38.281124511 -0300
++++ salidas//02_test_buy_car/__client_0_stdout__        2025-08-30 19:04:55.000000000 -0300
+@@ -0,0 +1,3 @@
++Initial balance: 15000
++Car bought: ToyotaCorolla, year: 2018, price: 12000.00
++Remaining balance: 3000
+
+
+[=>] Comparando 02_test_buy_car/__server_ret__...
+--- casos//02_test_buy_car/__server_ret__       1969-12-31 21:00:00.000000000 -0300
++++ salidas//02_test_buy_car/__server_ret__     2025-08-30 19:04:55.000000000 -0300
+@@ -0,0 +1 @@
++0
+
+
+[=>] Comparando 02_test_buy_car/__server_stdout__...
+--- casos//02_test_buy_car/__server_stdout__    1969-12-31 21:00:00.000000000 -0300
++++ salidas//02_test_buy_car/__server_stdout__  2025-08-30 19:04:55.000000000 -0300
+@@ -0,0 +1,4 @@
++Server started
++Hello, Mandie
++Initial balance: 15000
++New cars name: ToyotaCorolla --- remaining balance: 3000
+
+
+
+-------------------------
+[=>] Comparando 03_test_no_current_car/client_0_AtoB.dump...
+--- casos//03_test_no_current_car/client_0_AtoB.dump    1969-12-31 21:00:00.000000000 -0300
++++ salidas//03_test_no_current_car/client_0_AtoB.dump  2025-08-30 19:04:56.000000000 -0300
+@@ -0,0 +1 @@
++0100044572696304
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 03_test_no_current_car/client_0_BtoA.dump...
+--- casos//03_test_no_current_car/client_0_BtoA.dump    1969-12-31 21:00:00.000000000 -0300
++++ salidas//03_test_no_current_car/client_0_BtoA.dump  2025-08-30 19:04:56.000000000 -0300
+@@ -0,0 +1,2 @@
++0200003a9809000d4e6f206361722062
++6f75676874
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 03_test_no_current_car/__client_0_ret__...
+[=>] Comparando 03_test_no_current_car/__client_0_stdout__...
+--- casos//03_test_no_current_car/__client_0_stdout__   2025-09-08 14:27:38.399122517 -0300
++++ salidas//03_test_no_current_car/__client_0_stdout__ 2025-08-30 19:04:56.000000000 -0300
+@@ -0,0 +1,2 @@
++Initial balance: 15000
++Error: No car bought
+
+
+[=>] Comparando 03_test_no_current_car/__server_ret__...
+--- casos//03_test_no_current_car/__server_ret__        1969-12-31 21:00:00.000000000 -0300
++++ salidas//03_test_no_current_car/__server_ret__      2025-08-30 19:04:56.000000000 -0300
+@@ -0,0 +1 @@
++0
+
+
+[=>] Comparando 03_test_no_current_car/__server_stdout__...
+--- casos//03_test_no_current_car/__server_stdout__     1969-12-31 21:00:00.000000000 -0300
++++ salidas//03_test_no_current_car/__server_stdout__   2025-08-30 19:04:56.000000000 -0300
+@@ -0,0 +1,4 @@
++Server started
++Hello, Eric
++Initial balance: 15000
++Error: No car bought
+
+
+
+-------------------------
+[=>] Comparando 04_test_get_market/client_0_AtoB.dump...
+--- casos//04_test_get_market/client_0_AtoB.dump        1969-12-31 21:00:00.000000000 -0300
++++ salidas//04_test_get_market/client_0_AtoB.dump      2025-08-30 19:04:56.000000000 -0300
+@@ -0,0 +1 @@
++010007596f6c616e646105
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 04_test_get_market/client_0_BtoA.dump...
+--- casos//04_test_get_market/client_0_BtoA.dump        1969-12-31 21:00:00.000000000 -0300
++++ salidas//04_test_get_market/client_0_BtoA.dump      2025-08-30 19:04:56.000000000 -0300
+@@ -0,0 +1,4 @@
++0200003a98060003000d546f796f7461
++436f726f6c6c6107e200124f80000a48
++6f6e6461436976696307e400155cc000
++09466f7264466f63757307e10010c8e0
+
+
+[=>] Comparando 04_test_get_market/__client_0_ret__...
+[=>] Comparando 04_test_get_market/__client_0_stdout__...
+--- casos//04_test_get_market/__client_0_stdout__       2025-09-08 14:27:38.511120625 -0300
++++ salidas//04_test_get_market/__client_0_stdout__     2025-08-30 19:04:56.000000000 -0300
+@@ -0,0 +1,4 @@
++Initial balance: 15000
++ToyotaCorolla, year: 2018, price: 12000.00
++HondaCivic, year: 2020, price: 14000.00
++FordFocus, year: 2017, price: 11000.00
+
+
+[=>] Comparando 04_test_get_market/__server_ret__...
+--- casos//04_test_get_market/__server_ret__    1969-12-31 21:00:00.000000000 -0300
++++ salidas//04_test_get_market/__server_ret__  2025-08-30 19:04:56.000000000 -0300
+@@ -0,0 +1 @@
++0
+
+
+[=>] Comparando 04_test_get_market/__server_stdout__...
+--- casos//04_test_get_market/__server_stdout__ 1969-12-31 21:00:00.000000000 -0300
++++ salidas//04_test_get_market/__server_stdout__       2025-08-30 19:04:56.000000000 -0300
+@@ -0,0 +1,4 @@
++Server started
++Hello, Yolanda
++Initial balance: 15000
++3 cars sent
+
+
+
+-------------------------
+[=>] Comparando 05_test_get_buy_get/client_0_AtoB.dump...
+--- casos//05_test_get_buy_get/client_0_AtoB.dump       1969-12-31 21:00:00.000000000 -0300
++++ salidas//05_test_get_buy_get/client_0_AtoB.dump     2025-08-30 19:04:57.000000000 -0300
+@@ -0,0 +1,2 @@
++01000550657465720407000a486f6e64
++61436976696304
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 05_test_get_buy_get/client_0_BtoA.dump...
+--- casos//05_test_get_buy_get/client_0_BtoA.dump       1969-12-31 21:00:00.000000000 -0300
++++ salidas//05_test_get_buy_get/client_0_BtoA.dump     2025-08-30 19:04:57.000000000 -0300
+@@ -0,0 +1,4 @@
++020000465009000d4e6f206361722062
++6f7567687408000a486f6e6461436976
++696307e400155cc000000fa003000a48
++6f6e6461436976696307e400155cc0
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 05_test_get_buy_get/__client_0_ret__...
+[=>] Comparando 05_test_get_buy_get/__client_0_stdout__...
+--- casos//05_test_get_buy_get/__client_0_stdout__      2025-09-08 14:27:38.671117922 -0300
++++ salidas//05_test_get_buy_get/__client_0_stdout__    2025-08-30 19:04:57.000000000 -0300
+@@ -0,0 +1,5 @@
++Initial balance: 18000
++Error: No car bought
++Car bought: HondaCivic, year: 2020, price: 14000.00
++Remaining balance: 4000
++Current car: HondaCivic, year: 2020, price: 14000.00
+
+
+[=>] Comparando 05_test_get_buy_get/__server_ret__...
+--- casos//05_test_get_buy_get/__server_ret__   1969-12-31 21:00:00.000000000 -0300
++++ salidas//05_test_get_buy_get/__server_ret__ 2025-08-30 19:04:57.000000000 -0300
+@@ -0,0 +1 @@
++0
+
+
+[=>] Comparando 05_test_get_buy_get/__server_stdout__...
+--- casos//05_test_get_buy_get/__server_stdout__        1969-12-31 21:00:00.000000000 -0300
++++ salidas//05_test_get_buy_get/__server_stdout__      2025-08-30 19:04:57.000000000 -0300
+@@ -0,0 +1,6 @@
++Server started
++Hello, Peter
++Initial balance: 18000
++Error: No car bought
++New cars name: HondaCivic --- remaining balance: 4000
++Car HondaCivic 14000 2020 sent
+
+
+
+-------------------------
+[=>] Comparando 06_test_get_market_no_car/client_0_AtoB.dump...
+--- casos//06_test_get_market_no_car/client_0_AtoB.dump 1969-12-31 21:00:00.000000000 -0300
++++ salidas//06_test_get_market_no_car/client_0_AtoB.dump       2025-08-30 19:04:57.000000000 -0300
+@@ -0,0 +1 @@
++0100096e61746869313330340504
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 06_test_get_market_no_car/client_0_BtoA.dump...
+--- casos//06_test_get_market_no_car/client_0_BtoA.dump 1969-12-31 21:00:00.000000000 -0300
++++ salidas//06_test_get_market_no_car/client_0_BtoA.dump       2025-08-30 19:04:57.000000000 -0300
+@@ -0,0 +1,5 @@
++0200003a98060003000d546f796f7461
++436f726f6c6c6107e200124f80000a48
++6f6e6461436976696307e400155cc000
++09466f7264466f63757307e10010c8e0
++09000d4e6f2063617220626f75676874
+
+
+[=>] Comparando 06_test_get_market_no_car/__client_0_ret__...
+[=>] Comparando 06_test_get_market_no_car/__client_0_stdout__...
+--- casos//06_test_get_market_no_car/__client_0_stdout__        2025-09-08 14:27:38.833115186 -0300
++++ salidas//06_test_get_market_no_car/__client_0_stdout__      2025-08-30 19:04:57.000000000 -0300
+@@ -0,0 +1,5 @@
++Initial balance: 15000
++ToyotaCorolla, year: 2018, price: 12000.00
++HondaCivic, year: 2020, price: 14000.00
++FordFocus, year: 2017, price: 11000.00
++Error: No car bought
+
+
+[=>] Comparando 06_test_get_market_no_car/__server_ret__...
+--- casos//06_test_get_market_no_car/__server_ret__     1969-12-31 21:00:00.000000000 -0300
++++ salidas//06_test_get_market_no_car/__server_ret__   2025-08-30 19:04:57.000000000 -0300
+@@ -0,0 +1 @@
++0
+
+
+[=>] Comparando 06_test_get_market_no_car/__server_stdout__...
+--- casos//06_test_get_market_no_car/__server_stdout__  1969-12-31 21:00:00.000000000 -0300
++++ salidas//06_test_get_market_no_car/__server_stdout__        2025-08-30 19:04:57.000000000 -0300
+@@ -0,0 +1,5 @@
++Server started
++Hello, nathi1304
++Initial balance: 15000
++3 cars sent
++Error: No car bought
+
+
+
+-------------------------
+[=>] Comparando 07_test_no_money/client_0_AtoB.dump...
+--- casos//07_test_no_money/client_0_AtoB.dump  1969-12-31 21:00:00.000000000 -0300
++++ salidas//07_test_no_money/client_0_AtoB.dump        2025-08-30 19:04:57.000000000 -0300
+@@ -0,0 +1,2 @@
++0100096e617468693133303407000946
++6f7264466f637573
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 07_test_no_money/client_0_BtoA.dump...
+--- casos//07_test_no_money/client_0_BtoA.dump  1969-12-31 21:00:00.000000000 -0300
++++ salidas//07_test_no_money/client_0_BtoA.dump        2025-08-30 19:04:57.000000000 -0300
+@@ -0,0 +1,2 @@
++0200000064090012496e737566666963
++69656e742066756e6473
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 07_test_no_money/__client_0_ret__...
+[=>] Comparando 07_test_no_money/__client_0_stdout__...
+--- casos//07_test_no_money/__client_0_stdout__ 2025-09-08 14:27:38.944113311 -0300
++++ salidas//07_test_no_money/__client_0_stdout__       2025-08-30 19:04:57.000000000 -0300
+@@ -0,0 +1,2 @@
++Initial balance: 100
++Error: Insufficient funds
+
+
+[=>] Comparando 07_test_no_money/__server_ret__...
+--- casos//07_test_no_money/__server_ret__      1969-12-31 21:00:00.000000000 -0300
++++ salidas//07_test_no_money/__server_ret__    2025-08-30 19:04:57.000000000 -0300
+@@ -0,0 +1 @@
++0
+
+
+[=>] Comparando 07_test_no_money/__server_stdout__...
+--- casos//07_test_no_money/__server_stdout__   1969-12-31 21:00:00.000000000 -0300
++++ salidas//07_test_no_money/__server_stdout__ 2025-08-30 19:04:57.000000000 -0300
+@@ -0,0 +1,4 @@
++Server started
++Hello, nathi1304
++Initial balance: 100
++Error: Insufficient funds
+
+
+
+-------------------------
+[=>] Comparando 08_test_rich_client/client_0_AtoB.dump...
+--- casos//08_test_rich_client/client_0_AtoB.dump       1969-12-31 21:00:00.000000000 -0300
++++ salidas//08_test_rich_client/client_0_AtoB.dump     2025-08-30 19:04:58.000000000 -0300
+@@ -0,0 +1,4 @@
++01000652696368696507000d546f796f
++7461436f726f6c6c6104070009466f72
++64466f6375730407000a486f6e646143
++6976696304
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 08_test_rich_client/client_0_BtoA.dump...
+--- casos//08_test_rich_client/client_0_BtoA.dump       1969-12-31 21:00:00.000000000 -0300
++++ salidas//08_test_rich_client/client_0_BtoA.dump     2025-08-30 19:04:58.000000000 -0300
+@@ -0,0 +1,9 @@
++02000186a008000d546f796f7461436f
++726f6c6c6107e200124f80000157c003
++000d546f796f7461436f726f6c6c6107
++e200124f80080009466f7264466f6375
++7307e10010c8e000012cc8030009466f
++7264466f63757307e10010c8e008000a
++486f6e6461436976696307e400155cc0
++0000f61803000a486f6e646143697669
++6307e400155cc0
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 08_test_rich_client/__client_0_ret__...
+[=>] Comparando 08_test_rich_client/__client_0_stdout__...
+--- casos//08_test_rich_client/__client_0_stdout__      2025-09-08 14:27:39.053111470 -0300
++++ salidas//08_test_rich_client/__client_0_stdout__    2025-08-30 19:04:58.000000000 -0300
+@@ -0,0 +1,10 @@
++Initial balance: 100000
++Car bought: ToyotaCorolla, year: 2018, price: 12000.00
++Remaining balance: 88000
++Current car: ToyotaCorolla, year: 2018, price: 12000.00
++Car bought: FordFocus, year: 2017, price: 11000.00
++Remaining balance: 77000
++Current car: FordFocus, year: 2017, price: 11000.00
++Car bought: HondaCivic, year: 2020, price: 14000.00
++Remaining balance: 63000
++Current car: HondaCivic, year: 2020, price: 14000.00
+
+
+[=>] Comparando 08_test_rich_client/__server_ret__...
+--- casos//08_test_rich_client/__server_ret__   1969-12-31 21:00:00.000000000 -0300
++++ salidas//08_test_rich_client/__server_ret__ 2025-08-30 19:04:58.000000000 -0300
+@@ -0,0 +1 @@
++0
+
+
+[=>] Comparando 08_test_rich_client/__server_stdout__...
+--- casos//08_test_rich_client/__server_stdout__        1969-12-31 21:00:00.000000000 -0300
++++ salidas//08_test_rich_client/__server_stdout__      2025-08-30 19:04:58.000000000 -0300
+@@ -0,0 +1,9 @@
++Server started
++Hello, Richie
++Initial balance: 100000
++New cars name: ToyotaCorolla --- remaining balance: 88000
++Car ToyotaCorolla 12000 2018 sent
++New cars name: FordFocus --- remaining balance: 77000
++Car FordFocus 11000 2017 sent
++New cars name: HondaCivic --- remaining balance: 63000
++Car HondaCivic 14000 2020 sent
+
+
+
+-------------------------
+[=>] Comparando 09_test_market_browsing/client_0_AtoB.dump...
+--- casos//09_test_market_browsing/client_0_AtoB.dump   1969-12-31 21:00:00.000000000 -0300
++++ salidas//09_test_market_browsing/client_0_AtoB.dump 2025-08-30 19:04:59.000000000 -0300
+@@ -0,0 +1,2 @@
++01000a426f6242726f77736572040505
++0504
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 09_test_market_browsing/client_0_BtoA.dump...
+--- casos//09_test_market_browsing/client_0_BtoA.dump   1969-12-31 21:00:00.000000000 -0300
++++ salidas//09_test_market_browsing/client_0_BtoA.dump 2025-08-30 19:04:59.000000000 -0300
+@@ -0,0 +1,14 @@
++02000003e809000d4e6f206361722062
++6f75676874060003000d546f796f7461
++436f726f6c6c6107e200124f80000a48
++6f6e6461436976696307e400155cc000
++09466f7264466f63757307e10010c8e0
++060003000d546f796f7461436f726f6c
++6c6107e200124f80000a486f6e646143
++6976696307e400155cc00009466f7264
++466f63757307e10010c8e0060003000d
++546f796f7461436f726f6c6c6107e200
++124f80000a486f6e6461436976696307
++e400155cc00009466f7264466f637573
++07e10010c8e009000d4e6f2063617220
++626f75676874
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 09_test_market_browsing/__client_0_ret__...
+[=>] Comparando 09_test_market_browsing/__client_0_stdout__...
+--- casos//09_test_market_browsing/__client_0_stdout__  2025-09-08 14:27:39.208108848 -0300
++++ salidas//09_test_market_browsing/__client_0_stdout__        2025-08-30 19:04:59.000000000 -0300
+@@ -0,0 +1,12 @@
++Initial balance: 1000
++Error: No car bought
++ToyotaCorolla, year: 2018, price: 12000.00
++HondaCivic, year: 2020, price: 14000.00
++FordFocus, year: 2017, price: 11000.00
++ToyotaCorolla, year: 2018, price: 12000.00
++HondaCivic, year: 2020, price: 14000.00
++FordFocus, year: 2017, price: 11000.00
++ToyotaCorolla, year: 2018, price: 12000.00
++HondaCivic, year: 2020, price: 14000.00
++FordFocus, year: 2017, price: 11000.00
++Error: No car bought
+
+
+[=>] Comparando 09_test_market_browsing/__server_ret__...
+--- casos//09_test_market_browsing/__server_ret__       1969-12-31 21:00:00.000000000 -0300
++++ salidas//09_test_market_browsing/__server_ret__     2025-08-30 19:04:59.000000000 -0300
+@@ -0,0 +1 @@
++0
+
+
+[=>] Comparando 09_test_market_browsing/__server_stdout__...
+--- casos//09_test_market_browsing/__server_stdout__    1969-12-31 21:00:00.000000000 -0300
++++ salidas//09_test_market_browsing/__server_stdout__  2025-08-30 19:04:59.000000000 -0300
+@@ -0,0 +1,8 @@
++Server started
++Hello, BobBrowser
++Initial balance: 1000
++Error: No car bought
++3 cars sent
++3 cars sent
++3 cars sent
++Error: No car bought
+
+
+
+-------------------------
+[=>] Comparando 10_test_only_car/client_0_AtoB.dump...
+--- casos//10_test_only_car/client_0_AtoB.dump  1969-12-31 21:00:00.000000000 -0300
++++ salidas//10_test_only_car/client_0_AtoB.dump        2025-08-30 19:04:59.000000000 -0300
+@@ -0,0 +1,3 @@
++01000757696c6c69616d0507000d546f
++796f7461436f726f6c6c610407000946
++6f7264466f63757304
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 10_test_only_car/client_0_BtoA.dump...
+--- casos//10_test_only_car/client_0_BtoA.dump  1969-12-31 21:00:00.000000000 -0300
++++ salidas//10_test_only_car/client_0_BtoA.dump        2025-08-30 19:04:59.000000000 -0300
+@@ -0,0 +1,10 @@
++0200003a98060003000d546f796f7461
++436f726f6c6c6107e200124f80000a48
++6f6e6461436976696307e400155cc000
++09466f7264466f63757307e10010c8e0
++08000d546f796f7461436f726f6c6c61
++07e200124f8000000bb803000d546f79
++6f7461436f726f6c6c6107e200124f80
++090012496e73756666696369656e7420
++66756e647303000d546f796f7461436f
++726f6c6c6107e200124f80
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 10_test_only_car/__client_0_ret__...
+[=>] Comparando 10_test_only_car/__client_0_stdout__...
+--- casos//10_test_only_car/__client_0_stdout__ 2025-09-08 14:27:39.366106178 -0300
++++ salidas//10_test_only_car/__client_0_stdout__       2025-08-30 19:04:59.000000000 -0300
+@@ -0,0 +1,9 @@
++Initial balance: 15000
++ToyotaCorolla, year: 2018, price: 12000.00
++HondaCivic, year: 2020, price: 14000.00
++FordFocus, year: 2017, price: 11000.00
++Car bought: ToyotaCorolla, year: 2018, price: 12000.00
++Remaining balance: 3000
++Current car: ToyotaCorolla, year: 2018, price: 12000.00
++Error: Insufficient funds
++Current car: ToyotaCorolla, year: 2018, price: 12000.00
+
+
+[=>] Comparando 10_test_only_car/__server_ret__...
+--- casos//10_test_only_car/__server_ret__      1969-12-31 21:00:00.000000000 -0300
++++ salidas//10_test_only_car/__server_ret__    2025-08-30 19:04:59.000000000 -0300
+@@ -0,0 +1 @@
++0
+
+
+[=>] Comparando 10_test_only_car/__server_stdout__...
+--- casos//10_test_only_car/__server_stdout__   1969-12-31 21:00:00.000000000 -0300
++++ salidas//10_test_only_car/__server_stdout__ 2025-08-30 19:04:59.000000000 -0300
+@@ -0,0 +1,8 @@
++Server started
++Hello, William
++Initial balance: 15000
++3 cars sent
++New cars name: ToyotaCorolla --- remaining balance: 3000
++Car ToyotaCorolla 12000 2018 sent
++Error: Insufficient funds
++Car ToyotaCorolla 12000 2018 sent
+
+
+
+-------------------------
+[Error] Se encontraron diferencias entre las salidas obtenidas y las esperadas.
