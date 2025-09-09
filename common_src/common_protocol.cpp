@@ -92,7 +92,6 @@ void Protocol::send_car_bought(const Car& car, uint32_t remaining_money) {
     socket.sendall(&price_be, sizeof(price_be));
     socket.sendall(&money_be, sizeof(money_be));
 }
-
 void Protocol::send_error_message(const std::string& error) {
     uint8_t command = SEND_ERROR_MESSAGE;
     uint16_t length = host_to_big_endian_16(error.length());
@@ -100,6 +99,11 @@ void Protocol::send_error_message(const std::string& error) {
     socket.sendall(&command, sizeof(command));
     socket.sendall(&length, sizeof(length));
     socket.sendall(error.c_str(), error.length());
+}
+
+void Protocol::send_current_car_request() {
+    uint8_t command = SEND_CURRENT_CAR;
+    socket.sendall(&command, sizeof(command));
 }
 
 // ========== MÉTODOS PARA RECIBIR ==========

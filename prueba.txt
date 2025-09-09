@@ -1,0 +1,674 @@
+julio@julio-VirtualBox:~/Escritorio/Taller prueba/sockets-2025c2-PinangoJulio$ ./run_tests.sh . casos/ single-client  no-valgrind 60 10 no
+[=>] Ejecutando caso de prueba 'casos//01_test_send_username'
+[=>] El server estara usando el puerto TCP 1500
+[=>] Lanzando servidor (en background)
+[=>] Esperando a que el server abra el puerto 1500 (binding)
+[=>] Comando a ejecutar (server): ./server 1500 01_server.txt
+[=>] Ejecutando tiburoncin junto con el cliente 0
+[=>] Ejecutando tiburoncin para el cliente 0 (entre puertos 1501 (tiburoncin) y 1500 (server))
+[=>] Esperando a que tiburoncin abra el puerto 1501 (binding)
+[=>] Ejecutando cliente 0: ./client localhost 1501 01_client.txt
+[=>] Cliente 0 corriendo con process id (PID): 139757
+
+real    0m0,118s
+user    0m0,038s
+sys     0m0,021s
+
+real    0m0,399s
+user    0m0,012s
+sys     0m0,008s
+Cliente 0 finalizo con codigo de salida 0
+[=>] Esperando al server que es finalize
+El server finalizo con codigo de salida 0
+[=>] El servidor ha escrito en stderr:
+00000000  53 65 72 76 65 72 20 63  6f 6e 6e 65 63 74 69 6f  |Server connectio|
+00000010  6e 20 65 6e 64 65 64 3a  20 43 6c 69 65 6e 74 20  |n ended: Client |
+00000020  64 69 73 63 6f 6e 6e 65  63 74 65 64 0a           |disconnected.|
+0000002d
+
+
+-------------------------
+[=>] Ejecutando caso de prueba 'casos//02_test_buy_car'
+[=>] El server estara usando el puerto TCP 1502
+[=>] Lanzando servidor (en background)
+[=>] Esperando a que el server abra el puerto 1502 (binding)
+[=>] Comando a ejecutar (server): ./server 1502 02_server.txt
+[=>] Ejecutando tiburoncin junto con el cliente 0
+[=>] Ejecutando tiburoncin para el cliente 0 (entre puertos 1503 (tiburoncin) y 1502 (server))
+[=>] Esperando a que tiburoncin abra el puerto 1503 (binding)
+[=>] Ejecutando cliente 0: ./client localhost 1503 02_client.txt
+[=>] Cliente 0 corriendo con process id (PID): 139813
+
+real    0m0,071s
+user    0m0,024s
+sys     0m0,039s
+Cliente 0 finalizo con codigo de salida 0
+[=>] Esperando al server que es finalize
+
+real    0m0,410s
+user    0m0,013s
+sys     0m0,002s
+El server finalizo con codigo de salida 0
+[=>] El servidor ha escrito en stderr:
+00000000  53 65 72 76 65 72 20 63  6f 6e 6e 65 63 74 69 6f  |Server connectio|
+00000010  6e 20 65 6e 64 65 64 3a  20 43 6c 69 65 6e 74 20  |n ended: Client |
+00000020  64 69 73 63 6f 6e 6e 65  63 74 65 64 0a           |disconnected.|
+0000002d
+
+
+-------------------------
+[=>] Ejecutando caso de prueba 'casos//03_test_no_current_car'
+[=>] El server estara usando el puerto TCP 1504
+[=>] Lanzando servidor (en background)
+[=>] Esperando a que el server abra el puerto 1504 (binding)
+[=>] Comando a ejecutar (server): ./server 1504 03_server.txt
+[=>] Ejecutando tiburoncin junto con el cliente 0
+[=>] Ejecutando tiburoncin para el cliente 0 (entre puertos 1505 (tiburoncin) y 1504 (server))
+[=>] Esperando a que tiburoncin abra el puerto 1505 (binding)
+[=>] Ejecutando cliente 0: ./client localhost 1505 03_client.txt
+[=>] Cliente 0 corriendo con process id (PID): 139879
+
+real    0m0,072s
+user    0m0,032s
+sys     0m0,027s
+Cliente 0 finalizo con codigo de salida 0
+[=>] Esperando al server que es finalize
+
+real    0m0,423s
+user    0m0,014s
+sys     0m0,006s
+El server finalizo con codigo de salida 0
+[=>] El servidor ha escrito en stderr:
+00000000  53 65 72 76 65 72 20 63  6f 6e 6e 65 63 74 69 6f  |Server connectio|
+00000010  6e 20 65 6e 64 65 64 3a  20 43 6c 69 65 6e 74 20  |n ended: Client |
+00000020  64 69 73 63 6f 6e 6e 65  63 74 65 64 0a           |disconnected.|
+0000002d
+
+
+-------------------------
+[=>] Ejecutando caso de prueba 'casos//04_test_get_market'
+[=>] El server estara usando el puerto TCP 1506
+[=>] Lanzando servidor (en background)
+[=>] Esperando a que el server abra el puerto 1506 (binding)
+[=>] Comando a ejecutar (server): ./server 1506 04_server.txt
+[=>] Ejecutando tiburoncin junto con el cliente 0
+[=>] Ejecutando tiburoncin para el cliente 0 (entre puertos 1507 (tiburoncin) y 1506 (server))
+[=>] Esperando a que tiburoncin abra el puerto 1507 (binding)
+[=>] Ejecutando cliente 0: ./client localhost 1507 04_client.txt
+[=>] Cliente 0 corriendo con process id (PID): 139931
+
+real    0m0,075s
+user    0m0,030s
+sys     0m0,028s
+Cliente 0 finalizo con codigo de salida 0
+[=>] Esperando al server que es finalize
+
+real    0m0,165s
+user    0m0,010s
+sys     0m0,008s
+El server finalizo con codigo de salida 0
+[=>] El servidor ha escrito en stderr:
+00000000  53 65 72 76 65 72 20 63  6f 6e 6e 65 63 74 69 6f  |Server connectio|
+00000010  6e 20 65 6e 64 65 64 3a  20 43 6c 69 65 6e 74 20  |n ended: Client |
+00000020  64 69 73 63 6f 6e 6e 65  63 74 65 64 0a           |disconnected.|
+0000002d
+
+
+-------------------------
+[=>] Ejecutando caso de prueba 'casos//05_test_get_buy_get'
+[=>] El server estara usando el puerto TCP 1508
+[=>] Lanzando servidor (en background)
+[=>] Esperando a que el server abra el puerto 1508 (binding)
+[=>] Comando a ejecutar (server): ./server 1508 server.txt
+[=>] Ejecutando tiburoncin junto con el cliente 0
+[=>] Ejecutando tiburoncin para el cliente 0 (entre puertos 1509 (tiburoncin) y 1508 (server))
+[=>] Esperando a que tiburoncin abra el puerto 1509 (binding)
+[=>] Ejecutando cliente 0: ./client localhost 1509 client.txt
+[=>] Cliente 0 corriendo con process id (PID): 139992
+
+real    0m0,086s
+user    0m0,026s
+sys     0m0,034s
+Cliente 0 finalizo con codigo de salida 0
+[=>] Esperando al server que es finalize
+
+real    0m0,573s
+user    0m0,014s
+sys     0m0,009s
+El server finalizo con codigo de salida 0
+[=>] El servidor ha escrito en stderr:
+00000000  53 65 72 76 65 72 20 63  6f 6e 6e 65 63 74 69 6f  |Server connectio|
+00000010  6e 20 65 6e 64 65 64 3a  20 43 6c 69 65 6e 74 20  |n ended: Client |
+00000020  64 69 73 63 6f 6e 6e 65  63 74 65 64 0a           |disconnected.|
+0000002d
+
+
+-------------------------
+[=>] Ejecutando caso de prueba 'casos//06_test_get_market_no_car'
+[=>] El server estara usando el puerto TCP 1510
+[=>] Lanzando servidor (en background)
+[=>] Esperando a que el server abra el puerto 1510 (binding)
+[=>] Comando a ejecutar (server): ./server 1510 server.txt
+[=>] Ejecutando tiburoncin junto con el cliente 0
+[=>] Ejecutando tiburoncin para el cliente 0 (entre puertos 1511 (tiburoncin) y 1510 (server))
+[=>] Esperando a que tiburoncin abra el puerto 1511 (binding)
+[=>] Ejecutando cliente 0: ./client localhost 1511 client.txt
+[=>] Cliente 0 corriendo con process id (PID): 140051
+
+real    0m0,093s
+user    0m0,031s
+sys     0m0,030s
+Cliente 0 finalizo con codigo de salida 0
+[=>] Esperando al server que es finalize
+
+real    0m0,230s
+user    0m0,012s
+sys     0m0,006s
+El server finalizo con codigo de salida 0
+[=>] El servidor ha escrito en stderr:
+00000000  53 65 72 76 65 72 20 63  6f 6e 6e 65 63 74 69 6f  |Server connectio|
+00000010  6e 20 65 6e 64 65 64 3a  20 43 6c 69 65 6e 74 20  |n ended: Client |
+00000020  64 69 73 63 6f 6e 6e 65  63 74 65 64 0a           |disconnected.|
+0000002d
+
+
+-------------------------
+[=>] Ejecutando caso de prueba 'casos//07_test_no_money'
+[=>] El server estara usando el puerto TCP 1512
+[=>] Lanzando servidor (en background)
+[=>] Esperando a que el server abra el puerto 1512 (binding)
+[=>] Comando a ejecutar (server): ./server 1512 server.txt
+[=>] Ejecutando tiburoncin junto con el cliente 0
+[=>] Ejecutando tiburoncin para el cliente 0 (entre puertos 1513 (tiburoncin) y 1512 (server))
+[=>] Esperando a que tiburoncin abra el puerto 1513 (binding)
+[=>] Ejecutando cliente 0: ./client localhost 1513 client.txt
+[=>] Cliente 0 corriendo con process id (PID): 140107
+
+real    0m0,080s
+user    0m0,022s
+sys     0m0,038s
+Cliente 0 finalizo con codigo de salida 0
+[=>] Esperando al server que es finalize
+
+real    0m0,408s
+user    0m0,012s
+sys     0m0,006s
+El server finalizo con codigo de salida 0
+[=>] El servidor ha escrito en stderr:
+00000000  53 65 72 76 65 72 20 63  6f 6e 6e 65 63 74 69 6f  |Server connectio|
+00000010  6e 20 65 6e 64 65 64 3a  20 43 6c 69 65 6e 74 20  |n ended: Client |
+00000020  64 69 73 63 6f 6e 6e 65  63 74 65 64 0a           |disconnected.|
+0000002d
+
+
+-------------------------
+[=>] Ejecutando caso de prueba 'casos//08_test_rich_client'
+[=>] El server estara usando el puerto TCP 1514
+[=>] Lanzando servidor (en background)
+[=>] Esperando a que el server abra el puerto 1514 (binding)
+[=>] Comando a ejecutar (server): ./server 1514 server.txt
+[=>] Ejecutando tiburoncin junto con el cliente 0
+[=>] Ejecutando tiburoncin para el cliente 0 (entre puertos 1515 (tiburoncin) y 1514 (server))
+[=>] Esperando a que tiburoncin abra el puerto 1515 (binding)
+[=>] Ejecutando cliente 0: ./client localhost 1515 client.txt
+[=>] Cliente 0 corriendo con process id (PID): 140163
+
+real    0m0,066s
+user    0m0,035s
+sys     0m0,021s
+Cliente 0 finalizo con codigo de salida 0
+[=>] Esperando al server que es finalize
+
+real    0m0,780s
+user    0m0,016s
+sys     0m0,004s
+El server finalizo con codigo de salida 0
+[=>] El servidor ha escrito en stderr:
+00000000  53 65 72 76 65 72 20 63  6f 6e 6e 65 63 74 69 6f  |Server connectio|
+00000010  6e 20 65 6e 64 65 64 3a  20 43 6c 69 65 6e 74 20  |n ended: Client |
+00000020  64 69 73 63 6f 6e 6e 65  63 74 65 64 0a           |disconnected.|
+0000002d
+
+
+-------------------------
+[=>] Ejecutando caso de prueba 'casos//09_test_market_browsing'
+[=>] El server estara usando el puerto TCP 1516
+[=>] Lanzando servidor (en background)
+[=>] Esperando a que el server abra el puerto 1516 (binding)
+[=>] Comando a ejecutar (server): ./server 1516 server.txt
+[=>] Ejecutando tiburoncin junto con el cliente 0
+[=>] Ejecutando tiburoncin para el cliente 0 (entre puertos 1517 (tiburoncin) y 1516 (server))
+[=>] Esperando a que tiburoncin abra el puerto 1517 (binding)
+[=>] Ejecutando cliente 0: ./client localhost 1517 client.txt
+[=>] Cliente 0 corriendo con process id (PID): 140244
+
+real    0m0,112s
+user    0m0,031s
+sys     0m0,033s
+Cliente 0 finalizo con codigo de salida 0
+[=>] Esperando al server que es finalize
+
+real    0m0,586s
+user    0m0,005s
+sys     0m0,017s
+El server finalizo con codigo de salida 0
+[=>] El servidor ha escrito en stderr:
+00000000  53 65 72 76 65 72 20 63  6f 6e 6e 65 63 74 69 6f  |Server connectio|
+00000010  6e 20 65 6e 64 65 64 3a  20 43 6c 69 65 6e 74 20  |n ended: Client |
+00000020  64 69 73 63 6f 6e 6e 65  63 74 65 64 0a           |disconnected.|
+0000002d
+
+
+-------------------------
+[=>] Ejecutando caso de prueba 'casos//10_test_only_car'
+[=>] El server estara usando el puerto TCP 1518
+[=>] Lanzando servidor (en background)
+[=>] Esperando a que el server abra el puerto 1518 (binding)
+[=>] Comando a ejecutar (server): ./server 1518 server.txt
+[=>] Ejecutando tiburoncin junto con el cliente 0
+[=>] Ejecutando tiburoncin para el cliente 0 (entre puertos 1519 (tiburoncin) y 1518 (server))
+[=>] Esperando a que tiburoncin abra el puerto 1519 (binding)
+[=>] Ejecutando cliente 0: ./client localhost 1519 client.txt
+[=>] Cliente 0 corriendo con process id (PID): 140312
+
+real    0m0,162s
+user    0m0,038s
+sys     0m0,039s
+Cliente 0 finalizo con codigo de salida 0
+[=>] Esperando al server que es finalize
+
+real    0m0,713s
+user    0m0,012s
+sys     0m0,008s
+El server finalizo con codigo de salida 0
+[=>] El servidor ha escrito en stderr:
+00000000  53 65 72 76 65 72 20 63  6f 6e 6e 65 63 74 69 6f  |Server connectio|
+00000010  6e 20 65 6e 64 65 64 3a  20 43 6c 69 65 6e 74 20  |n ended: Client |
+00000020  64 69 73 63 6f 6e 6e 65  63 74 65 64 0a           |disconnected.|
+0000002d
+
+
+-------------------------
+julio@julio-VirtualBox:~/Escritorio/Taller prueba/sockets-2025c2-PinangoJulio$ ./compare_outputs.sh casos/ salidas/
+
+Se compararan los archivos *obtenidos* con los *esperados*.
+Si se encuentran diferencias, estas se mostraran tal que:
+ - las lineas prefijadas con '-' provienen del archivo *obtenido* (tuyo);
+ - las prefijadas con '+' son del archivo *esperado* (el correcto).
+
+-------------------------
+[=>] Comparando 01_test_send_username/client_0_AtoB.dump...
+[=>] Comparando 01_test_send_username/client_0_BtoA.dump...
+--- casos//01_test_send_username/client_0_BtoA.dump     2025-09-09 00:44:51.408156407 -0300
++++ salidas//01_test_send_username/client_0_BtoA.dump   2025-08-30 19:04:55.000000000 -0300
+@@ -1 +1 @@
+-020016e360
+\ No hay ningún carácter de nueva línea al final del archivo
++0200003a98
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 01_test_send_username/__client_0_ret__...
+[=>] Comparando 01_test_send_username/__client_0_stdout__...
+--- casos//01_test_send_username/__client_0_stdout__    2025-09-09 00:44:51.408156407 -0300
++++ salidas//01_test_send_username/__client_0_stdout__  2025-08-30 19:04:55.000000000 -0300
+@@ -1 +1 @@
+-Initial balance: 15000.00
++Initial balance: 15000
+
+
+[=>] Comparando 01_test_send_username/__server_ret__...
+[=>] Comparando 01_test_send_username/__server_stdout__...
+
+-------------------------
+[=>] Comparando 02_test_buy_car/client_0_AtoB.dump...
+[=>] Comparando 02_test_buy_car/client_0_BtoA.dump...
+--- casos//02_test_buy_car/client_0_BtoA.dump   2025-09-09 00:44:51.892243196 -0300
++++ salidas//02_test_buy_car/client_0_BtoA.dump 2025-08-30 19:04:55.000000000 -0300
+@@ -1,2 +1,2 @@
+-020016e36008000d546f796f7461436f
+-726f6c6c6107e200124f80000493e0
+\ No hay ningún carácter de nueva línea al final del archivo
++0200003a9808000d546f796f7461436f
++726f6c6c6107e200124f8000000bb8
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 02_test_buy_car/__client_0_ret__...
+[=>] Comparando 02_test_buy_car/__client_0_stdout__...
+--- casos//02_test_buy_car/__client_0_stdout__  2025-09-09 00:44:51.892243196 -0300
++++ salidas//02_test_buy_car/__client_0_stdout__        2025-08-30 19:04:55.000000000 -0300
+@@ -1,3 +1,3 @@
+-Initial balance: 15000.00
++Initial balance: 15000
+ Car bought: ToyotaCorolla, year: 2018, price: 12000.00
+-Remaining balance: 3000.00
++Remaining balance: 3000
+
+
+[=>] Comparando 02_test_buy_car/__server_ret__...
+[=>] Comparando 02_test_buy_car/__server_stdout__...
+
+-------------------------
+[=>] Comparando 03_test_no_current_car/client_0_AtoB.dump...
+--- casos//03_test_no_current_car/client_0_AtoB.dump    2025-09-09 00:44:52.393333036 -0300
++++ salidas//03_test_no_current_car/client_0_AtoB.dump  2025-08-30 19:04:56.000000000 -0300
+@@ -1 +1 @@
+-0100044572696303
+\ No hay ningún carácter de nueva línea al final del archivo
++0100044572696304
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 03_test_no_current_car/client_0_BtoA.dump...
+--- casos//03_test_no_current_car/client_0_BtoA.dump    2025-09-09 00:44:52.455344154 -0300
++++ salidas//03_test_no_current_car/client_0_BtoA.dump  2025-08-30 19:04:56.000000000 -0300
+@@ -1,2 +1,2 @@
+-020016e36009000d4e6f206361722062
++0200003a9809000d4e6f206361722062
+ 6f75676874
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 03_test_no_current_car/__client_0_ret__...
+[=>] Comparando 03_test_no_current_car/__client_0_stdout__...
+--- casos//03_test_no_current_car/__client_0_stdout__   2025-09-09 00:44:52.456344333 -0300
++++ salidas//03_test_no_current_car/__client_0_stdout__ 2025-08-30 19:04:56.000000000 -0300
+@@ -1,2 +1,2 @@
+-Initial balance: 15000.00
++Initial balance: 15000
+ Error: No car bought
+
+
+[=>] Comparando 03_test_no_current_car/__server_ret__...
+[=>] Comparando 03_test_no_current_car/__server_stdout__...
+
+-------------------------
+[=>] Comparando 04_test_get_market/client_0_AtoB.dump...
+[=>] Comparando 04_test_get_market/client_0_BtoA.dump...
+--- casos//04_test_get_market/client_0_BtoA.dump        2025-09-09 00:44:52.718391316 -0300
++++ salidas//04_test_get_market/client_0_BtoA.dump      2025-08-30 19:04:56.000000000 -0300
+@@ -1,4 +1,4 @@
+-020016e360060003000d546f796f7461
++0200003a98060003000d546f796f7461
+ 436f726f6c6c6107e200124f80000a48
+ 6f6e6461436976696307e400155cc000
+ 09466f7264466f63757307e10010c8e0
+
+
+[=>] Comparando 04_test_get_market/__client_0_ret__...
+[=>] Comparando 04_test_get_market/__client_0_stdout__...
+--- casos//04_test_get_market/__client_0_stdout__       2025-09-09 00:44:52.718391316 -0300
++++ salidas//04_test_get_market/__client_0_stdout__     2025-08-30 19:04:56.000000000 -0300
+@@ -1,4 +1,4 @@
+-Initial balance: 15000.00
++Initial balance: 15000
+ ToyotaCorolla, year: 2018, price: 12000.00
+ HondaCivic, year: 2020, price: 14000.00
+ FordFocus, year: 2017, price: 11000.00
+
+
+[=>] Comparando 04_test_get_market/__server_ret__...
+[=>] Comparando 04_test_get_market/__server_stdout__...
+
+-------------------------
+[=>] Comparando 05_test_get_buy_get/client_0_AtoB.dump...
+--- casos//05_test_get_buy_get/client_0_AtoB.dump       2025-09-09 00:44:53.332501424 -0300
++++ salidas//05_test_get_buy_get/client_0_AtoB.dump     2025-08-30 19:04:57.000000000 -0300
+@@ -1,2 +1,2 @@
+-01000550657465720307000a486f6e64
+-61436976696303
+\ No hay ningún carácter de nueva línea al final del archivo
++01000550657465720407000a486f6e64
++61436976696304
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 05_test_get_buy_get/client_0_BtoA.dump...
+--- casos//05_test_get_buy_get/client_0_BtoA.dump       2025-09-09 00:44:53.374508956 -0300
++++ salidas//05_test_get_buy_get/client_0_BtoA.dump     2025-08-30 19:04:57.000000000 -0300
+@@ -1,4 +1,4 @@
+-02001b774009000d4e6f206361722062
++020000465009000d4e6f206361722062
+ 6f7567687408000a486f6e6461436976
+-696307e400155cc000061a8004000a48
++696307e400155cc000000fa003000a48
+ 6f6e6461436976696307e400155cc0
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 05_test_get_buy_get/__client_0_ret__...
+[=>] Comparando 05_test_get_buy_get/__client_0_stdout__...
+--- casos//05_test_get_buy_get/__client_0_stdout__      2025-09-09 00:44:53.375509136 -0300
++++ salidas//05_test_get_buy_get/__client_0_stdout__    2025-08-30 19:04:57.000000000 -0300
+@@ -1,5 +1,5 @@
+-Initial balance: 18000.00
++Initial balance: 18000
+ Error: No car bought
+ Car bought: HondaCivic, year: 2020, price: 14000.00
+-Remaining balance: 4000.00
++Remaining balance: 4000
+ Current car: HondaCivic, year: 2020, price: 14000.00
+
+
+[=>] Comparando 05_test_get_buy_get/__server_ret__...
+[=>] Comparando 05_test_get_buy_get/__server_stdout__...
+
+-------------------------
+[=>] Comparando 06_test_get_market_no_car/client_0_AtoB.dump...
+--- casos//06_test_get_market_no_car/client_0_AtoB.dump 2025-09-09 00:44:53.675562935 -0300
++++ salidas//06_test_get_market_no_car/client_0_AtoB.dump       2025-08-30 19:04:57.000000000 -0300
+@@ -1 +1 @@
+-0100096e61746869313330340503
+\ No hay ningún carácter de nueva línea al final del archivo
++0100096e61746869313330340504
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 06_test_get_market_no_car/client_0_BtoA.dump...
+--- casos//06_test_get_market_no_car/client_0_BtoA.dump 2025-09-09 00:44:53.716570288 -0300
++++ salidas//06_test_get_market_no_car/client_0_BtoA.dump       2025-08-30 19:04:57.000000000 -0300
+@@ -1,4 +1,4 @@
+-020016e360060003000d546f796f7461
++0200003a98060003000d546f796f7461
+ 436f726f6c6c6107e200124f80000a48
+ 6f6e6461436976696307e400155cc000
+ 09466f7264466f63757307e10010c8e0
+
+
+[=>] Comparando 06_test_get_market_no_car/__client_0_ret__...
+[=>] Comparando 06_test_get_market_no_car/__client_0_stdout__...
+--- casos//06_test_get_market_no_car/__client_0_stdout__        2025-09-09 00:44:53.716570288 -0300
++++ salidas//06_test_get_market_no_car/__client_0_stdout__      2025-08-30 19:04:57.000000000 -0300
+@@ -1,4 +1,4 @@
+-Initial balance: 15000.00
++Initial balance: 15000
+ ToyotaCorolla, year: 2018, price: 12000.00
+ HondaCivic, year: 2020, price: 14000.00
+ FordFocus, year: 2017, price: 11000.00
+
+
+[=>] Comparando 06_test_get_market_no_car/__server_ret__...
+[=>] Comparando 06_test_get_market_no_car/__server_stdout__...
+
+-------------------------
+[=>] Comparando 07_test_no_money/client_0_AtoB.dump...
+[=>] Comparando 07_test_no_money/client_0_BtoA.dump...
+--- casos//07_test_no_money/client_0_BtoA.dump  2025-09-09 00:44:54.246665335 -0300
++++ salidas//07_test_no_money/client_0_BtoA.dump        2025-08-30 19:04:57.000000000 -0300
+@@ -1,2 +1,2 @@
+-0200002710090012496e737566666963
++0200000064090012496e737566666963
+ 69656e742066756e6473
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 07_test_no_money/__client_0_ret__...
+[=>] Comparando 07_test_no_money/__client_0_stdout__...
+--- casos//07_test_no_money/__client_0_stdout__ 2025-09-09 00:44:54.246665335 -0300
++++ salidas//07_test_no_money/__client_0_stdout__       2025-08-30 19:04:57.000000000 -0300
+@@ -1,2 +1,2 @@
+-Initial balance: 100.00
++Initial balance: 100
+ Error: Insufficient funds
+
+
+[=>] Comparando 07_test_no_money/__server_ret__...
+[=>] Comparando 07_test_no_money/__server_stdout__...
+
+-------------------------
+[=>] Comparando 08_test_rich_client/client_0_AtoB.dump...
+--- casos//08_test_rich_client/client_0_AtoB.dump       2025-09-09 00:44:55.040807731 -0300
++++ salidas//08_test_rich_client/client_0_AtoB.dump     2025-08-30 19:04:58.000000000 -0300
+@@ -1,4 +1,4 @@
+ 01000652696368696507000d546f796f
+-7461436f726f6c6c6103070009466f72
+-64466f6375730307000a486f6e646143
+-6976696303
+\ No hay ningún carácter de nueva línea al final del archivo
++7461436f726f6c6c6104070009466f72
++64466f6375730407000a486f6e646143
++6976696304
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 08_test_rich_client/client_0_BtoA.dump...
+--- casos//08_test_rich_client/client_0_BtoA.dump       2025-09-09 00:44:55.105819392 -0300
++++ salidas//08_test_rich_client/client_0_BtoA.dump     2025-08-30 19:04:58.000000000 -0300
+@@ -1,9 +1,9 @@
+-020098968008000d546f796f7461436f
+-726f6c6c6107e200124f800086470004
++02000186a008000d546f796f7461436f
++726f6c6c6107e200124f80000157c003
+ 000d546f796f7461436f726f6c6c6107
+ e200124f80080009466f7264466f6375
+-7307e10010c8e000757e20040009466f
++7307e10010c8e000012cc8030009466f
+ 7264466f63757307e10010c8e008000a
+ 486f6e6461436976696307e400155cc0
+-0060216004000a486f6e646143697669
++0000f61803000a486f6e646143697669
+ 6307e400155cc0
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 08_test_rich_client/__client_0_ret__...
+[=>] Comparando 08_test_rich_client/__client_0_stdout__...
+--- casos//08_test_rich_client/__client_0_stdout__      2025-09-09 00:44:55.107819751 -0300
++++ salidas//08_test_rich_client/__client_0_stdout__    2025-08-30 19:04:58.000000000 -0300
+@@ -1,10 +1,10 @@
+-Initial balance: 100000.00
++Initial balance: 100000
+ Car bought: ToyotaCorolla, year: 2018, price: 12000.00
+-Remaining balance: 88000.00
++Remaining balance: 88000
+ Current car: ToyotaCorolla, year: 2018, price: 12000.00
+ Car bought: FordFocus, year: 2017, price: 11000.00
+-Remaining balance: 77000.00
++Remaining balance: 77000
+ Current car: FordFocus, year: 2017, price: 11000.00
+ Car bought: HondaCivic, year: 2020, price: 14000.00
+-Remaining balance: 63000.00
++Remaining balance: 63000
+ Current car: HondaCivic, year: 2020, price: 14000.00
+
+
+[=>] Comparando 08_test_rich_client/__server_ret__...
+[=>] Comparando 08_test_rich_client/__server_stdout__...
+
+-------------------------
+[=>] Comparando 09_test_market_browsing/client_0_AtoB.dump...
+--- casos//09_test_market_browsing/client_0_AtoB.dump   2025-09-09 00:44:55.808945469 -0300
++++ salidas//09_test_market_browsing/client_0_AtoB.dump 2025-08-30 19:04:59.000000000 -0300
+@@ -1,2 +1,2 @@
+-01000a426f6242726f77736572030505
+-0503
+\ No hay ningún carácter de nueva línea al final del archivo
++01000a426f6242726f77736572040505
++0504
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 09_test_market_browsing/client_0_BtoA.dump...
+--- casos//09_test_market_browsing/client_0_BtoA.dump   2025-09-09 00:44:55.850953001 -0300
++++ salidas//09_test_market_browsing/client_0_BtoA.dump 2025-08-30 19:04:59.000000000 -0300
+@@ -1,4 +1,4 @@
+-02000186a009000d4e6f206361722062
++02000003e809000d4e6f206361722062
+ 6f75676874060003000d546f796f7461
+ 436f726f6c6c6107e200124f80000a48
+ 6f6e6461436976696307e400155cc000
+
+
+[=>] Comparando 09_test_market_browsing/__client_0_ret__...
+[=>] Comparando 09_test_market_browsing/__client_0_stdout__...
+--- casos//09_test_market_browsing/__client_0_stdout__  2025-09-09 00:44:55.851953180 -0300
++++ salidas//09_test_market_browsing/__client_0_stdout__        2025-08-30 19:04:59.000000000 -0300
+@@ -1,4 +1,4 @@
+-Initial balance: 1000.00
++Initial balance: 1000
+ Error: No car bought
+ ToyotaCorolla, year: 2018, price: 12000.00
+ HondaCivic, year: 2020, price: 14000.00
+
+
+[=>] Comparando 09_test_market_browsing/__server_ret__...
+[=>] Comparando 09_test_market_browsing/__server_stdout__...
+
+-------------------------
+[=>] Comparando 10_test_only_car/client_0_AtoB.dump...
+--- casos//10_test_only_car/client_0_AtoB.dump  2025-09-09 00:44:56.596086620 -0300
++++ salidas//10_test_only_car/client_0_AtoB.dump        2025-08-30 19:04:59.000000000 -0300
+@@ -1,3 +1,3 @@
+ 01000757696c6c69616d0507000d546f
+-796f7461436f726f6c6c610307000946
+-6f7264466f63757303
+\ No hay ningún carácter de nueva línea al final del archivo
++796f7461436f726f6c6c610407000946
++6f7264466f63757304
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 10_test_only_car/client_0_BtoA.dump...
+--- casos//10_test_only_car/client_0_BtoA.dump  2025-09-09 00:44:56.638094153 -0300
++++ salidas//10_test_only_car/client_0_BtoA.dump        2025-08-30 19:04:59.000000000 -0300
+@@ -1,10 +1,10 @@
+-020016e360060003000d546f796f7461
++0200003a98060003000d546f796f7461
+ 436f726f6c6c6107e200124f80000a48
+ 6f6e6461436976696307e400155cc000
+ 09466f7264466f63757307e10010c8e0
+ 08000d546f796f7461436f726f6c6c61
+-07e200124f80000493e004000d546f79
++07e200124f8000000bb803000d546f79
+ 6f7461436f726f6c6c6107e200124f80
+ 090012496e73756666696369656e7420
+-66756e647304000d546f796f7461436f
++66756e647303000d546f796f7461436f
+ 726f6c6c6107e200124f80
+\ No hay ningún carácter de nueva línea al final del archivo
+
+
+[=>] Comparando 10_test_only_car/__client_0_ret__...
+[=>] Comparando 10_test_only_car/__client_0_stdout__...
+--- casos//10_test_only_car/__client_0_stdout__ 2025-09-09 00:44:56.638094153 -0300
++++ salidas//10_test_only_car/__client_0_stdout__       2025-08-30 19:04:59.000000000 -0300
+@@ -1,9 +1,9 @@
+-Initial balance: 15000.00
++Initial balance: 15000
+ ToyotaCorolla, year: 2018, price: 12000.00
+ HondaCivic, year: 2020, price: 14000.00
+ FordFocus, year: 2017, price: 11000.00
+ Car bought: ToyotaCorolla, year: 2018, price: 12000.00
+-Remaining balance: 3000.00
++Remaining balance: 3000
+ Current car: ToyotaCorolla, year: 2018, price: 12000.00
+ Error: Insufficient funds
+ Current car: ToyotaCorolla, year: 2018, price: 12000.00
+
+
+[=>] Comparando 10_test_only_car/__server_ret__...
+[=>] Comparando 10_test_only_car/__server_stdout__...
+
+-------------------------
+[Error] Se encontraron diferencias entre las salidas obtenidas y las esperadas.

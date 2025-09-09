@@ -43,6 +43,7 @@ public:
     void send_buy_car(const std::string& car_name);
     void send_car_bought(const Car& car, uint32_t remaining_money);
     void send_error_message(const std::string& error);
+    void send_current_car_request();
 
     // Métodos para recibir mensajes (usado por cliente y servidor)
     std::string recv_username();

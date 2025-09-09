@@ -40,16 +40,13 @@ void Server::parse_line(const std::string& line) {
     iss >> command;
 
     if (command == "money") {
-        iss >> initial_money;
-        initial_money *= 100;
+        iss >> initial_money;  // YA está en centavos, NO multiplicar
     } else if (command == "car") {
         std::string name;
         uint16_t year;
         uint32_t price;
 
-        iss >> name >> year >> price;
-        price *= 100;  // convertir a centavos
-
+        iss >> name >> year >> price;  // YA está en centavos, NO multiplicar
         market_cars.emplace_back(name, year, price);
     }
 }
@@ -72,7 +69,7 @@ void Server::run() {
 
         // SEGUNDO: enviar dinero inicial (RESPUESTA al username)
         protocol.send_initial_money(client_money);
-        std::cout << "Initial balance: " << (client_money / 100) << std::endl;
+        std::cout << "Initial balance: " << (client_money / 100.0f) << std::endl;
 
         // LUEGO: procesar otros comandos
         while (true) {
@@ -102,8 +99,9 @@ void Server::run() {
 void Server::handle_get_current_car(Protocol& protocol) {
     if (client_current_car.has_value()) {
         protocol.send_current_car(client_current_car.value());
-        std::cout << "Car " << client_current_car->name << " " << (client_current_car->price / 100)
-                  << " " << client_current_car->year << " sent" << std::endl;
+        std::cout << "Car " << client_current_car->name << " "
+                  << (client_current_car->price / 100.0f) << " " << client_current_car->year
+                  << " sent" << std::endl;
     } else {
         protocol.send_error_message("No car bought");
         std::cout << "Error: No car bought" << std::endl;
@@ -137,7 +135,7 @@ void Server::handle_buy_car(Protocol& protocol) {
 
     protocol.send_car_bought(*car, client_money);
     std::cout << "New cars name: " << car->name
-              << " --- remaining balance: " << (client_money / 100) << std::endl;
+              << " --- remaining balance: " << (client_money / 100.0f);
 }
 
 const Car* Server::find_car_by_name(const std::string& name) const {
