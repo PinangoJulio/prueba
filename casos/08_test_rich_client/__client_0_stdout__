@@ -1,10 +1,10 @@
-Initial balance: 1000
-Car bought: ToyotaCorolla, year: 2018, price: 120.00
-Remaining balance: 880.00
-Current car: ToyotaCorolla, year: 2018, price: 120.00
-Car bought: FordFocus, year: 2017, price: 110.00
-Remaining balance: 770.00
-Current car: FordFocus, year: 2017, price: 110.00
-Car bought: HondaCivic, year: 2020, price: 140.00
-Remaining balance: 630.00
-Current car: HondaCivic, year: 2020, price: 140.00
+Initial balance: 100000
+Car bought: ToyotaCorolla, year: 2018, price: 12000.00
+Remaining balance: 88000.00
+Current car: ToyotaCorolla, year: 2018, price: 12000.00
+Car bought: FordFocus, year: 2017, price: 11000.00
+Remaining balance: 77000.00
+Current car: FordFocus, year: 2017, price: 11000.00
+Car bought: HondaCivic, year: 2020, price: 14000.00
+Remaining balance: 63000.00
+Current car: HondaCivic, year: 2020, price: 14000.00

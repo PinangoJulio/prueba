@@ -53,7 +53,8 @@ void Client::load_and_execute_commands(const std::string& filename) {
                                  std::to_string(response));
     }
     uint32_t money = protocol.recv_initial_money();
-    std::cout << "Initial balance: " << (money / 100.0f) << std::endl;  // Sin decimales
+    // CORREGIR: dividir por 100 para mostrar en pesos
+    std::cout << "Initial balance: " << (money / 100) << std::endl;
 
     // TERCERO: reiniciar y ejecutar todos los comandos
     file.clear();
@@ -90,11 +91,12 @@ void Client::execute_command(const std::string& command, const std::string& para
 }
 
 void Client::request_current_car() {
-    protocol.send_get_current_car();  // Envía 0x03 (correcto)
+    protocol.send_get_current_car();  // Envía 0x04
 
     uint8_t command = protocol.recv_command();
 
-    if (command == SEND_CURRENT_CAR) {
+    // CORREGIR: El servidor responde con 0x03 cuando envía el auto
+    if (command == SEND_CURRENT_CAR) {  // 0x03
         Car current_car = protocol.recv_current_car();
         print_car_info(current_car, "Current car: ");
     } else if (command == SEND_ERROR_MESSAGE) {
@@ -128,8 +130,8 @@ void Client::request_buy_car(const std::string& car_name) {
         std::cout << "Car bought: " << car.name << ", year: " << car.year
                   << ", price: " << std::fixed << std::setprecision(2) << (car.price / 100.0f)
                   << std::endl;
-        std::cout << "Remaining balance: " << (remaining_money / 100.0f)
-                  << std::endl;  // Sin decimales
+        std::cout << "Remaining balance: " << std::fixed << std::setprecision(2)
+                  << (remaining_money / 100.0f) << std::endl;
     } else if (command == SEND_ERROR_MESSAGE) {
         std::string error = protocol.recv_error_message();
         std::cout << "Error: " << error << std::endl;
@@ -141,16 +143,13 @@ void Client::request_buy_car(const std::string& car_name) {
 void Client::print_market_info(const std::vector<Car>& cars) {
     for (const auto& car: cars) {
         std::cout << car.name << ", year: " << car.year << ", price: " << std::fixed
-                  << std::setprecision(2) << (float)car.price / 100.0f
-                  << std::endl;  // DIVIDIR por 100 solo para mostrar
+                  << std::setprecision(2) << (float)car.price / 100.0f << std::endl;
     }
 }
 
 void Client::print_car_info(const Car& car, const std::string& prefix) {
     std::cout << prefix << car.name << ", year: " << car.year << ", price: " << std::fixed
-              << std::setprecision(2) << (car.price / 100.0f) << std::endl;  // DIVIDIR por 100
+              << std::setprecision(2) << (car.price / 100.0f) << std::endl;
 }
 
-void Client::run() {
-    // El cliente ya ejecutó todos los comandos en el constructor
-}
+void Client::run() {}

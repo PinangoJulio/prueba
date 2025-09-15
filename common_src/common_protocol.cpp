@@ -8,7 +8,7 @@
 
 Protocol::Protocol(Socket&& skt): socket(std::move(skt)) {}
 
-// ========== MÉTODOS PARA ENVIAR ==========
+// ========== MÉTODOS PARA ENVIAR ========== //
 
 void Protocol::send_username(const std::string& username) {
     uint8_t command = SEND_USERNAME;
@@ -106,7 +106,7 @@ void Protocol::send_current_car_request() {
     socket.sendall(&command, sizeof(command));
 }
 
-// ========== MÉTODOS PARA RECIBIR ==========
+// ========== MÉTODOS PARA RECIBIR ========== //
 
 uint8_t Protocol::recv_command() {
     uint8_t command = 0;
@@ -135,9 +135,7 @@ uint32_t Protocol::recv_initial_money() {
     return money;
 }
 
-void Protocol::recv_get_current_car() {
-    // No hay datos adicionales que recibir
-}
+void Protocol::recv_get_current_car() {}
 
 Car Protocol::recv_current_car() {
     uint16_t name_length;
@@ -158,9 +156,7 @@ Car Protocol::recv_current_car() {
     return Car(name, year, price);
 }
 
-void Protocol::recv_get_market_info() {
-    // No hay datos adicionales que recibir
-}
+void Protocol::recv_get_market_info() {}
 
 std::vector<Car> Protocol::recv_market_info() {
     uint16_t num_cars;
@@ -203,7 +199,6 @@ std::string Protocol::recv_buy_car() {
 }
 
 std::pair<Car, uint32_t> Protocol::recv_car_bought() {
-    // Primero leemos la info del auto
     uint16_t name_length;
     socket.recvall(&name_length, sizeof(name_length));
     name_length = big_endian_to_host_16(name_length);

@@ -18,7 +18,7 @@ int main(int argc, const char* argv[]) {
         client.run();
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
-        return 1;  // ← CAMBIAR de 0 a 1
+        return 1;
     }
     return 0;
 }
