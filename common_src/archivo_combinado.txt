@@ -1,0 +1,1496 @@
+//////// archivo_combinado.txt /////////////
+
+
+
+//////// common_constants.h /////////////
+
+#ifndef COMMON_CONSTANTS_H
+#define COMMON_CONSTANTS_H
+
+#define SEND_USERNAME 0x01
+#define SEND_INITIAL_MONEY 0x02
+#define SEND_CURRENT_CAR 0x03
+#define GET_CURRENT_CAR 0x04
+#define GET_MARKET_INFO 0x05
+#define SEND_MARKET_INFO 0x06
+#define BUY_CAR 0x07
+#define SEND_CAR_BOUGHT 0x08
+#define SEND_ERROR_MESSAGE 0x09
+
+#endif
+
+
+//////// common_protocol.cpp /////////////
+
+#include "common_protocol.h"
+
+#include <iostream>
+#include <stdexcept>
+#include <utility>
+
+#include "common_constants.h"
+
+Protocol::Protocol(Socket&& skt): socket(std::move(skt)) {}
+
+// ========== MÉTODOS PARA ENVIAR ========== //
+
+void Protocol::send_username(const std::string& username) {
+    uint8_t command = SEND_USERNAME;
+    uint16_t length = host_to_big_endian_16(username.length());
+
+    socket.sendall(&command, sizeof(command));
+    socket.sendall(&length, sizeof(length));
+    socket.sendall(username.c_str(), username.length());
+}
+
+void Protocol::send_initial_money(uint32_t money) {
+    uint8_t command = SEND_INITIAL_MONEY;
+    uint32_t money_be = host_to_big_endian_32(money);
+
+    socket.sendall(&command, sizeof(command));
+    socket.sendall(&money_be, sizeof(money_be));
+}
+
+void Protocol::send_get_current_car() {
+    uint8_t command = GET_CURRENT_CAR;
+    socket.sendall(&command, sizeof(command));
+}
+
+void Protocol::send_current_car(const Car& car) {
+    uint8_t command = SEND_CURRENT_CAR;
+    uint16_t name_length = host_to_big_endian_16(car.name.length());
+    uint16_t year_be = host_to_big_endian_16(car.year);
+    uint32_t price_be = host_to_big_endian_32(car.price);
+
+    socket.sendall(&command, sizeof(command));
+    socket.sendall(&name_length, sizeof(name_length));
+    socket.sendall(car.name.c_str(), car.name.length());
+    socket.sendall(&year_be, sizeof(year_be));
+    socket.sendall(&price_be, sizeof(price_be));
+}
+
+void Protocol::send_get_market_info() {
+    uint8_t command = GET_MARKET_INFO;
+    socket.sendall(&command, sizeof(command));
+}
+
+void Protocol::send_market_info(const std::vector<Car>& cars) {
+    uint8_t command = SEND_MARKET_INFO;
+    uint16_t num_cars = host_to_big_endian_16(cars.size());
+
+    socket.sendall(&command, sizeof(command));
+    socket.sendall(&num_cars, sizeof(num_cars));
+
+    for (const auto& car: cars) {
+        uint16_t name_length = host_to_big_endian_16(car.name.length());
+        uint16_t year_be = host_to_big_endian_16(car.year);
+        uint32_t price_be = host_to_big_endian_32(car.price);
+
+        socket.sendall(&name_length, sizeof(name_length));
+        socket.sendall(car.name.c_str(), car.name.length());
+        socket.sendall(&year_be, sizeof(year_be));
+        socket.sendall(&price_be, sizeof(price_be));
+    }
+}
+
+void Protocol::send_buy_car(const std::string& car_name) {
+    uint8_t command = BUY_CAR;
+    uint16_t length = host_to_big_endian_16(car_name.length());
+
+    socket.sendall(&command, sizeof(command));
+    socket.sendall(&length, sizeof(length));
+    socket.sendall(car_name.c_str(), car_name.length());
+}
+
+void Protocol::send_car_bought(const Car& car, uint32_t remaining_money) {
+    uint8_t command = SEND_CAR_BOUGHT;
+    uint16_t name_length = host_to_big_endian_16(car.name.length());
+    uint16_t year_be = host_to_big_endian_16(car.year);
+    uint32_t price_be = host_to_big_endian_32(car.price);
+    uint32_t money_be = host_to_big_endian_32(remaining_money);
+
+    socket.sendall(&command, sizeof(command));
+    socket.sendall(&name_length, sizeof(name_length));
+    socket.sendall(car.name.c_str(), car.name.length());
+    socket.sendall(&year_be, sizeof(year_be));
+    socket.sendall(&price_be, sizeof(price_be));
+    socket.sendall(&money_be, sizeof(money_be));
+}
+void Protocol::send_error_message(const std::string& error) {
+    uint8_t command = SEND_ERROR_MESSAGE;
+    uint16_t length = host_to_big_endian_16(error.length());
+
+    socket.sendall(&command, sizeof(command));
+    socket.sendall(&length, sizeof(length));
+    socket.sendall(error.c_str(), error.length());
+}
+
+void Protocol::send_current_car_request() {
+    uint8_t command = SEND_CURRENT_CAR;
+    socket.sendall(&command, sizeof(command));
+}
+
+// ========== MÉTODOS PARA RECIBIR ========== //
+
+uint8_t Protocol::recv_command() {
+    uint8_t command = 0;
+    int ret = socket.recvall(&command, sizeof(command));
+    if (ret == 0) {
+        throw std::runtime_error("Client disconnected");
+    }
+
+    return command;
+}
+
+std::string Protocol::recv_username() {
+    uint16_t length;
+    socket.recvall(&length, sizeof(length));
+    length = big_endian_to_host_16(length);
+
+    std::string username(length, '\0');
+    socket.recvall(&username[0], length);
+    return username;
+}
+
+uint32_t Protocol::recv_initial_money() {
+    uint32_t money;
+    socket.recvall(&money, sizeof(money));
+    money = big_endian_to_host_32(money);
+    return money;
+}
+
+void Protocol::recv_get_current_car() {}
+
+Car Protocol::recv_current_car() {
+    uint16_t name_length;
+    socket.recvall(&name_length, sizeof(name_length));
+    name_length = big_endian_to_host_16(name_length);
+
+    std::string name(name_length, '\0');
+    socket.recvall(&name[0], name_length);
+
+    uint16_t year;
+    socket.recvall(&year, sizeof(year));
+    year = big_endian_to_host_16(year);
+
+    uint32_t price;
+    socket.recvall(&price, sizeof(price));
+    price = big_endian_to_host_32(price);
+
+    return Car(name, year, price);
+}
+
+void Protocol::recv_get_market_info() {}
+
+std::vector<Car> Protocol::recv_market_info() {
+    uint16_t num_cars;
+    socket.recvall(&num_cars, sizeof(num_cars));
+    num_cars = big_endian_to_host_16(num_cars);
+
+    std::vector<Car> cars;
+    cars.reserve(num_cars);
+
+    for (int i = 0; i < num_cars; i++) {
+        uint16_t name_length;
+        socket.recvall(&name_length, sizeof(name_length));
+        name_length = big_endian_to_host_16(name_length);
+
+        std::string name(name_length, '\0');
+        socket.recvall(&name[0], name_length);
+
+        uint16_t year;
+        socket.recvall(&year, sizeof(year));
+        year = big_endian_to_host_16(year);
+
+        uint32_t price;
+        socket.recvall(&price, sizeof(price));
+        price = big_endian_to_host_32(price);
+
+        cars.emplace_back(name, year, price);
+    }
+
+    return cars;
+}
+
+std::string Protocol::recv_buy_car() {
+    uint16_t length;
+    socket.recvall(&length, sizeof(length));
+    length = big_endian_to_host_16(length);
+
+    std::string car_name(length, '\0');
+    socket.recvall(&car_name[0], length);
+    return car_name;
+}
+
+std::pair<Car, uint32_t> Protocol::recv_car_bought() {
+    uint16_t name_length;
+    socket.recvall(&name_length, sizeof(name_length));
+    name_length = big_endian_to_host_16(name_length);
+
+    std::string name(name_length, '\0');
+    socket.recvall(&name[0], name_length);
+
+    uint16_t year;
+    socket.recvall(&year, sizeof(year));
+    year = big_endian_to_host_16(year);
+
+    uint32_t price;
+    socket.recvall(&price, sizeof(price));
+    price = big_endian_to_host_32(price);
+
+    Car car(name, year, price);
+
+    uint32_t remaining_money;
+    socket.recvall(&remaining_money, sizeof(remaining_money));
+    remaining_money = big_endian_to_host_32(remaining_money);
+
+    return std::make_pair(car, remaining_money);
+}
+
+std::string Protocol::recv_error_message() {
+    uint16_t length;
+    socket.recvall(&length, sizeof(length));
+    length = big_endian_to_host_16(length);
+
+    std::string error(length, '\0');
+    socket.recvall(&error[0], length);
+    return error;
+}
+
+
+//////// common_protocol.h /////////////
+
+#ifndef COMMON_PROTOCOL_H
+#define COMMON_PROTOCOL_H
+
+#include <cstdint>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include <arpa/inet.h>
+
+#include "common_socket.h"
+
+struct Car {
+    std::string name;
+    uint16_t year;
+    uint32_t price;
+
+    Car(): year(0), price(0) {}
+    Car(const std::string& n, uint16_t y, uint32_t p): name(n), year(y), price(p) {}
+};
+
+class Protocol {
+private:
+    Socket socket;
+
+public:
+    explicit Protocol(Socket&& skt);
+
+    void send_username(const std::string& username);
+    void send_initial_money(uint32_t money);
+    void send_get_current_car();
+    void send_current_car(const Car& car);
+    void send_get_market_info();
+    void send_market_info(const std::vector<Car>& cars);
+    void send_buy_car(const std::string& car_name);
+    void send_car_bought(const Car& car, uint32_t remaining_money);
+    void send_error_message(const std::string& error);
+    void send_current_car_request();
+
+    std::string recv_username();
+    uint32_t recv_initial_money();
+    void recv_get_current_car();
+    Car recv_current_car();
+    void recv_get_market_info();
+    std::vector<Car> recv_market_info();
+    std::string recv_buy_car();
+    std::pair<Car, uint32_t> recv_car_bought();
+    std::string recv_error_message();
+
+    uint8_t recv_command();
+
+    Protocol(const Protocol&) = delete;
+    Protocol& operator=(const Protocol&) = delete;
+
+    Protocol(Protocol&&) = default;
+    Protocol& operator=(Protocol&&) = default;
+
+private:
+    uint16_t host_to_big_endian_16(uint16_t value) { return htons(value); }
+
+    uint32_t host_to_big_endian_32(uint32_t value) { return htonl(value); }
+
+    uint16_t big_endian_to_host_16(uint16_t value) { return ntohs(value); }
+
+    uint32_t big_endian_to_host_32(uint32_t value) { return ntohl(value); }
+};
+
+#endif  // COMMON_PROTOCOL_H
+
+
+//////// common_socket.cpp /////////////
+
+#include <stdio.h>
+#include <assert.h>
+#include <string.h>
+#include <errno.h>
+
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <unistd.h>
+
+#include "common_socket.h"
+#include "resolver.h"
+#include "liberror.h"
+
+#include <stdexcept>
+
+#define STREAM_SEND_CLOSED 0x01
+#define STREAM_RECV_CLOSED 0x02
+#define STREAM_BOTH_CLOSED 0x03
+#define STREAM_BOTH_OPEN 0x00
+
+Socket::Socket(
+        const char *hostname,
+        const char *servname) {
+    Resolver resolver(hostname, servname, false);
+
+    int s = -1;
+    int skt = -1;
+    this->closed = true;
+    this->stream_status = STREAM_BOTH_CLOSED;
+
+    /*
+     * Por cada dirección obtenida tenemos que ver cual es realmente funcional.
+     * `getaddrinfo` puede darnos direcciones IP validas pero que apuntan
+     * a servidores que no están activos (`getaddrinfo` simplemente no
+     * lo puede saber).
+     *
+     * Es responsabilidad nuestra probar cada una de ellas hasta encontrar
+     * una que funcione.
+     * */
+    while (resolver.has_next()) {
+        struct addrinfo *addr = resolver.next();
+
+        /* Cerramos el socket si nos quedo abierto de la iteración
+         * anterior
+         * */
+        if (skt != -1)
+            ::close(skt);
+
+        /*
+         * Con esta llamada creamos/obtenemos un socket.
+         * */
+        skt = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+        if (skt == -1) {
+            continue;
+        }
+
+        /* Intentamos conectarnos al servidor cuya dirección
+         * fue dada por `getaddrinfo`
+         *
+         * Esta operación es **bloqueante** lo que significa que el programa
+         * va a detenerse unos momentos hasta poder conectarse al server
+         * o detectar y notificar de un error.
+         * */
+        s = connect(skt, addr->ai_addr, addr->ai_addrlen);
+        if (s == -1) {
+            continue;
+        }
+
+        /*
+         * Conexión exitosa!
+         * */
+        this->closed = false;
+        this->stream_status = STREAM_BOTH_OPEN;
+        this->skt = skt;
+        return;
+    }
+
+    /*
+     * Si terminamos el while-loop es por que no nos pudimos
+     * conectar.
+     * */
+    int saved_errno = errno;
+
+    /*
+     * Si el `skt` es -1 es por q (1) no entramos nunca al for-loop
+     * o (2) la ultima llamada `socket` fallo y retorno -1.
+     * En ambos casos no debemos cerrar ningun socket.
+     *
+     * Si en cambio `skt` es distinto de -1 significa q tenemos
+     * un socket abierto.
+     * */
+    if (skt != -1)
+        ::close(skt);
+
+    throw LibError(
+            saved_errno,
+            "socket construction failed (connect to %s:%s)",
+            (hostname ? hostname : ""),
+            (servname ? servname : ""));
+}
+
+Socket::Socket(const char *servname) {
+    Resolver resolver(nullptr, servname, true);
+
+    int s = -1;
+    int skt = -1;
+    this->closed = true;
+    this->stream_status = STREAM_BOTH_CLOSED;
+    while (resolver.has_next()) {
+        struct addrinfo *addr = resolver.next();
+
+        if (skt != -1)
+            ::close(skt);
+
+        skt = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+        if (skt == -1) {
+            continue;
+        }
+
+        /*
+         * Configuramos al socket para q no falle si la dirección local
+         * en la que queremos levantar el servidor (con el bind)
+         * "estuvo ocupada hace poco".
+         *
+         * Nota el uso del tiempo pasado: "estuvo ocupada hace poco".
+         *
+         * Cuando un servidor cualquiera bind'ea en una dirección/puerto
+         * local, ese puerto queda en el estado LISTEN (o ESCUCHANDO).
+         *
+         * Ningún otro programa puede levantase y escuchar en ese puerto
+         * "que esta siendo usado".
+         *
+         * Cuando dicho programa finaliza, podrías pensar q el puerto
+         * queda libre, pero no.
+         *
+         * Queda en el estado WAIT, una especie de estado tipo
+         * "estuvo ocupado hace poco".
+         *
+         * Recién luego de unos segundos el OS deja realmente libre el puerto.
+         *
+         * Por que? Long story short: el OS no sabe si hay paquetes de red
+         * "aun viajando" hacia el puerto y prefiere reservar el puerto
+         * para evitar q algún otro servidor desprevenido se levanta ahí
+         * y se "morfe" paquetes destinados para el server anterior.
+         *
+         * Con SO_REUSEADDR le decimos al OS q "esta todo bien" si el
+         * puerto aun esta en WAIT, y q nos debe dejar hacer un bind.
+         *
+         * De ahí el nombre "reuse address" o "SO_REUSEADDR".
+         **/
+        int optval = 1;
+        s = setsockopt(skt, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
+        if (s == -1) {
+            continue;
+        }
+
+        /*
+         * Hacemos le bind: enlazamos el socket a una dirección local.
+         * A diferencia de lo que hacemos en `Socket::init_for_connection`
+         * que obtenemos una dirección de una máquina remota y nos conectamos
+         * a ella, el resolver nos dará direcciones locales (véase el flag
+         * `is_passive` de `Resolver`).
+         *
+         * Con `bind` asociaremos el socket a dicha dirección local
+         * y con `listen` pondremos el socket a escuchar conexiones entrantes.
+         * */
+        s = bind(skt, addr->ai_addr, addr->ai_addrlen);
+        if (s == -1) {
+            continue;
+        }
+
+        /*
+         * Ponemos el socket a escuchar. Ese 20 (podría ser otro valor)
+         * indica cuantas conexiones a la espera de ser aceptadas se toleraran
+         *
+         * No tiene nada q ver con cuantas conexiones totales el server tendrá.
+         * */
+        s = listen(skt, 20);
+        if (s == -1) {
+            continue;
+        }
+
+        /*
+         * Setup exitoso!
+         * */
+        this->closed = false;
+        this->stream_status = STREAM_BOTH_OPEN;
+        this->skt = skt;
+        return;
+    }
+
+    int saved_errno = errno;
+
+    if (skt != -1)
+        ::close(skt);
+
+    throw LibError(
+            saved_errno,
+            "socket construction failed (listen on %s)",
+            (servname ? servname : ""));
+}
+
+Socket::Socket(Socket&& other) {
+    /* Nos copiamos del otro socket... */
+    this->skt = other.skt;
+    this->closed = other.closed;
+    this->stream_status = other.stream_status;
+
+    /* ...pero luego le sacamos al otro socket
+     * el ownership del recurso.
+     * Efectivamente el ownership pasó de él
+     * a nosotros: el ownership se movió.
+     *
+     * En el caso de `Socket` podemos marcar el file
+     * descriptor del otro socket como invalido (-1)
+     * y marcarlo como cerrado (closed).
+     * De esa manera el destructor de `other` no
+     * va a intentar cerrar el file descriptor.
+     * */
+    other.skt = -1;
+    other.closed = true;
+    other.stream_status = STREAM_BOTH_CLOSED;
+}
+
+Socket& Socket::operator=(Socket&& other) {
+    /* Si el usuario hace algo como tratar de moverse
+     * a si mismo (`skt = skt;`) simplemente no hacemos
+     * nada.
+     * */
+    if (this == &other)
+        return *this;
+
+    /* A diferencia del constructor por movimiento,
+     * `this` (nosotros) es un socket completamente creado
+     * y debemos desinicializarlo primero antes de pisarle
+     * el recurso con el que le robaremos al otro socket (`other`)
+     * */
+    if (not this->closed) {
+        ::shutdown(this->skt, 2);
+        ::close(this->skt);
+    }
+
+    /* Ahora hacemos los mismos pasos que en el move constructor */
+    this->skt = other.skt;
+    this->closed = other.closed;
+    this->stream_status = other.stream_status;
+    other.skt = -1;
+    other.closed = true;
+    other.stream_status = STREAM_BOTH_CLOSED;
+
+    return *this;
+}
+
+int Socket::recvsome(
+        void *data,
+        unsigned int sz
+    ) {
+    chk_skt_or_fail();
+    int s = recv(this->skt, (char*)data, sz, 0);
+    if (s == 0) {
+        /*
+         * Puede ser o no un error, dependerá del protocolo.
+         * Alguno protocolo podría decir "se reciben datos hasta
+         * que la conexión se cierra" en cuyo caso el cierre del socket
+         * no es un error sino algo esperado.
+         * */
+        stream_status |= STREAM_RECV_CLOSED;
+        return 0;
+    } else if (s == -1) {
+        /*
+         * 99% casi seguro que es un error real
+         * */
+        throw LibError(errno, "socket recv failed");
+    } else {
+        return s;
+    }
+}
+
+int Socket::sendsome(
+        const void *data,
+        unsigned int sz
+    ) {
+    chk_skt_or_fail();
+    /*
+     * Cuando se hace un send, el sistema operativo puede aceptar
+     * la data pero descubrir luego que el socket fue cerrado
+     * por el otro endpoint quedando la data sin enviar.
+     *
+     * Esto se lo conoce como "tubería rota" o "broken pipe".
+     *
+     * En Linux, el sistema operativo envía una señal (`SIGPIPE`) que
+     * si no es manejada termina matando al proceso.
+     * Manejo de señales esta fuera del alcance de este proyecto.
+     *
+     * Por suerte si le pasamos a send el flag `MSG_NOSIGNAL`
+     * la señal `SIGPIPE` no es enviada y por ende no nos matara el proceso.
+     *
+     * Esta en nosotros luego hace el chequeo correspondiente
+     * (ver más abajo).
+     * */
+    int s = send(this->skt, (char*)data, sz, MSG_NOSIGNAL);
+    if (s == -1) {
+        /*
+         * Este es un caso especial: cuando enviamos algo pero en el medio
+         * se detecta un cierre del socket no se sabe bien cuanto se logro
+         * enviar (y fue recibido por el peer) y cuanto se perdió.
+         *
+         * Este es el famoso broken pipe.
+         * */
+        if (errno == EPIPE) {
+            /*
+             * Puede o no ser un error (véase el comentario en `Socket::recvsome`)
+             * */
+            stream_status |= STREAM_SEND_CLOSED;
+            return 0;
+        }
+
+        /* En cualquier otro caso supondremos un error
+         * y lanzamos una excepción.
+         * */
+        throw LibError(errno, "socket send failed");
+    } else if (s == 0) {
+        /*
+         * Jamas debería pasar.
+         * */
+        stream_status |= STREAM_SEND_CLOSED;
+        return 0;
+    } else {
+        return s;
+    }
+}
+
+int Socket::recvall(
+        void *data,
+        unsigned int sz
+    ) {
+    unsigned int received = 0;
+
+    while (received < sz) {
+        int s = recvsome(
+                (char*)data + received,
+                sz - received);
+
+        if (s <= 0) {
+            /*
+             * Si el socket fue cerrado (`s == 0`) o hubo un error
+             * `Socket::recvsome` ya debería haber seteado `stream_status`
+             * y haber notificado el error.
+             *
+             * Nosotros podemos entonces meramente
+             *  - lanzar excepción si recibimos algunos bytes pero no todos los pedidos
+             *  - propagar la excepción `Socket::recvsome` si esto falló.
+             *  - retornar end of stream (0) si es lo q recibimos de `Socket::recvsome`
+             * */
+            assert(s == 0);
+            if (received)
+                throw LibError(
+                        EPIPE,
+                        "socket received only %d of %d bytes",
+                        received,
+                        sz);
+            else
+                return 0;
+        } else {
+            /*
+             * OK, recibimos algo pero no necesariamente todo lo que
+             * esperamos. La condición del `while` checkea eso justamente.
+             * */
+            received += s;
+        }
+    }
+
+    return sz;
+}
+
+
+int Socket::sendall(
+        const void *data,
+        unsigned int sz
+    ) {
+    unsigned int sent = 0;
+
+    while (sent < sz) {
+        int s = sendsome(
+                (char*)data + sent,
+                sz - sent);
+
+        /* Véase los comentarios de `Socket::recvall` */
+        if (s <= 0) {
+            assert(s == 0);
+            if (sent)
+                throw LibError(
+                        EPIPE,
+                        "socket sent only %d of %d bytes",
+                        sent,
+                        sz);
+            else
+                return 0;
+        } else {
+            sent += s;
+        }
+    }
+
+    return sz;
+}
+
+Socket::Socket(int skt) {
+    this->skt = skt;
+    this->closed = false;
+    this->stream_status = STREAM_BOTH_OPEN;
+}
+
+Socket Socket::accept() {
+    chk_skt_or_fail();
+    /*
+     * `accept` nos bloqueara hasta que algún cliente se conecte a nosotros
+     * y la conexión se establezca.
+     *
+     * Una vez que eso suceda, `accept` retornara el file descriptor
+     * de un *nuevo* socket (`peer_skt`) que representara a la
+     * conexión establecida con *ese* cliente.
+     *
+     * En todo momento podemos seguir usando *nuestro* file descriptor
+     * (`this->skt`) para seguir haciendo más llamadas a `accept`
+     * independientemente de que enviemos/recibamos del socket `peer`.
+     * */
+    int peer_skt = ::accept(this->skt, nullptr, nullptr);
+    if (peer_skt == -1)
+        throw LibError(errno, "socket accept failed");
+
+    /*
+     * `peer_skt` es un file descriptor crudo y no queremos
+     * que nuestro cliente manipule recursos crudos sino que
+     * los use a través de un TDA.
+     *
+     * Por eso creamos un `Socket` y lo pasamos por movimiento
+     * */
+    return Socket(peer_skt);
+}
+
+void Socket::shutdown(int how) {
+    chk_skt_or_fail();
+    if (::shutdown(this->skt, how) == -1) {
+        throw LibError(errno, "socket shutdown failed");
+    }
+
+    switch (how) {
+        case 0:
+            stream_status |= STREAM_RECV_CLOSED;
+            break;
+        case 1:
+            stream_status |= STREAM_SEND_CLOSED;
+            break;
+        case 2:
+            stream_status |= STREAM_BOTH_CLOSED;
+            break;
+        default:
+            throw std::runtime_error("Unknow shutdown value");
+    }
+}
+
+bool Socket::is_stream_send_closed() const {
+    return stream_status & STREAM_SEND_CLOSED;
+}
+
+bool Socket::is_stream_recv_closed() const {
+    return stream_status & STREAM_RECV_CLOSED;
+}
+
+int Socket::close() {
+    chk_skt_or_fail();
+    this->closed = true;
+    this->stream_status = STREAM_BOTH_CLOSED;
+    return ::close(this->skt);
+}
+
+Socket::~Socket() {
+    if (not this->closed) {
+        ::shutdown(this->skt, 2);
+        ::close(this->skt);
+    }
+}
+
+void Socket::chk_skt_or_fail() const {
+    if (skt == -1) {
+        throw std::runtime_error(
+                "socket with invalid file descriptor (-1), "
+                "perhaps you are using a *previously moved* "
+                "socket (and therefore invalid)."
+                );
+    }
+}
+
+//////// common_socket.h /////////////
+
+#ifndef COMMON_SOCKET_H
+#define COMMON_SOCKET_H
+
+/*
+ * TDA Socket.
+ * Por simplificación este TDA se enfocará solamente
+ * en sockets IPv4 para TCP.
+ * */
+class Socket {
+    private:
+    int skt;
+    bool closed;
+    int stream_status;
+
+    /*
+     * Construye el socket pasándole directamente el file descriptor.
+     * */
+    explicit Socket(int skt);
+
+    /*
+     * Checkea que el file descriptor (skt) sea "valido".
+     *
+     * No hace un checkeo muy exhaustivo, simplemente verifica que
+     * no sea -1.
+     *
+     * En un object RAII como este, el atributo skt esta siempre
+     * bien definido (distinto de -1) **salvo** cuando es movido.
+     *
+     * En teoría una vez movido el objecto, este no puede ser usado
+     * ya q queda invalido.
+     *
+     * En el caso de Socket, al moverse se setea skt a -1.
+     *
+     * En lenguajes como Rust usar un objeto "ya movido" falla
+     * en tiempo de compilación.
+     *
+     * En C++, bueno, es C++ y el comportamiento es indefinido :D.
+     *
+     * Este check es para ayudarte a detectar ese caso y lanzar una
+     * excepción. No es lo más bonito del universo pero te dará una
+     * pista de que puede estar andando mal.
+     * */
+    void chk_skt_or_fail() const;
+
+    public:
+/*
+ * Constructores para `Socket` tanto para conectarse a un servidor
+ * (`Socket::Socket(const char*, const char*)`) como para ser usado
+ * por un servidor (`Socket::Socket(const char*)`).
+ *
+ * Muchas librerías de muchos lenguajes ofrecen una única formal de inicializar
+ * los sockets y luego métodos (post-inicialización) para establecer
+ * la conexión o ponerlo en escucha.
+ *
+ * Otras librerías/lenguajes van por tener una inicialización para
+ * el socket activo y otra para el pasivo.
+ *
+ * Este TDA va por ese lado.
+ *
+ * Para `Socket::Socket(const char*, const char*)`,  <hostname>/<servname> es la dirección
+ * de la máquina remota a la cual se quiere conectar.
+ *
+ * Para `Socket::Socket(const char*)`, buscara una dirección local válida
+ * para escuchar y aceptar conexiones automáticamente en el <servname> dado.
+ *
+ * En caso de error los constructores lanzaran una excepción.
+ * */
+Socket(
+        const char *hostname,
+        const char *servname);
+
+explicit Socket(const char *servname);
+
+/*
+ * Deshabilitamos el constructor por copia y operador asignación por copia
+ * ya que no queremos que se puedan copiar objetos `Socket`.
+ *
+ * Se podrían copiar?, no. Si bien un `Socket` el un `int` y un `bool` y seria
+ * trivial copiarlo, conceptualmente ese `int` no es meramente un número
+ * sino un file descriptor, un identificador que tiene asociado varios
+ * recursos del lado del sistema operativo.
+ *
+ * Copiar un `int` no implica que esos recursos son copiados (es como
+ * copiar un puntero y pretender que el objeto apuntado se copie mágicamente).
+ *
+ * Más aun no tiene sentido pensar en copiar un socket. Un socket
+ * representa una conexión algo q no se puede copiar.
+ *
+ * Lo mismo pasa con otros recursos. Un archivo referenciado por `FILE*`.
+ * Copiar ese puntero no implica que realmente tendrás una copia del archivo
+ * en tu disco rígido.
+ *
+ * Por eso deshabilitamos la copia. No tiene sentido.
+ * */
+Socket(const Socket&) = delete;
+Socket& operator=(const Socket&) = delete;
+
+/*
+ * Hacemos que el `Socket` sea movible.
+ * */
+Socket(Socket&&);
+Socket& operator=(Socket&&);
+
+/* `Socket::sendsome` lee hasta `sz` bytes del buffer y los envía. La función
+ * puede enviar menos bytes sin embargo.
+ *
+ * `Socket::recvsome` por el otro lado recibe hasta `sz` bytes y los escribe
+ * en el buffer (que debe estar pre-allocado). La función puede recibir
+ * menos bytes sin embargo.
+ *
+ * Si el socket detecto que la conexión fue cerrada, el metodo
+ * `is_stream_send_closed` o `is_stream_recv_closed` (segun corresponda)
+ * retornaran `true`, de otro modo sera `false`.
+ *
+ * Retorna 0 si se cerro el socket,
+ * o positivo que indicara cuantos bytes realmente se enviaron/recibieron.
+ *
+ * Si hay un error se lanza una excepción.
+ *
+ * Lease manpage de `send` y `recv`
+ * */
+int sendsome(
+        const void *data,
+        unsigned int sz
+        );
+int recvsome(
+        void *data,
+        unsigned int sz
+        );
+
+/*
+ * `Socket::sendall` envía exactamente `sz` bytes leídos del buffer, ni más,
+ * ni menos. `Socket::recvall` recibe exactamente sz bytes.
+ *
+ * Si hay un error se lanza una excepción.
+ *
+ * Si no hubo un error pero el socket se cerro durante el envio/recibo
+ * de los bytes y algunos bytes fueron enviados/recibidos,
+ * se lanza también una excepción.
+ *
+ * Si en cambio ningún byte se pudo enviar/recibir, se retorna 0.
+ *
+ * En ambos casos, donde el socket se cerró,
+ * `is_stream_send_closed` o `is_stream_recv_closed` (segun corresponda)
+ * retornara `true`.
+ *
+ * En caso de éxito se retorna la misma cantidad de bytes pedidos
+ * para envio/recibo, lease `sz`.
+ *
+ * */
+int sendall(
+        const void *data,
+        unsigned int sz
+        );
+int recvall(
+        void *data,
+        unsigned int sz
+        );
+
+/*
+ * Acepta una conexión entrante y retorna un nuevo socket
+ * construido a partir de ella.
+ *
+ * En caso de error, se lanza una excepción.
+ * */
+Socket accept();
+
+/*
+ * Cierra la conexión ya sea parcial o completamente.
+ * Lease manpage de `shutdown`
+ * */
+void shutdown(int how);
+
+/*
+ * Determina si el stream de envio (send) o de recepción (recv)
+ * están cerrado (sea por que se hizo un shutdown o por que el
+ * otro endpoint hizo un shutdown).
+ * */
+bool is_stream_send_closed() const;
+bool is_stream_recv_closed() const;
+
+/*
+ * Cierra el socket. El cierre no implica un `shutdown`
+ * que debe ser llamado explícitamente.
+ * */
+int close();
+
+/*
+ * Destruye el socket. Si aun esta conectado,
+ * se llamara a `Socket::shutdown` y `Socket::close`
+ * automáticamente.
+ * */
+~Socket();
+};
+#endif // COMMON_SOCKET_H
+
+//////// liberror.cpp /////////////
+
+#define _POSIX_C_SOURCE 200809L
+/*
+ * Este es un hack alrededor de un bug de G++ que, a pesar de decirle
+ * que use un estándar (véase el Makefile), igualmente usa código
+ * que es especifico de GNU (y no POSIX).
+ *
+ * En particular esto afecta a la funcion `strerror_r`.
+ * Cuando se usa el estándar POSIX y `GNU_SOURCE` no esta definido, `strerror_r`
+ * retorna un `int`.
+ *
+ * En cambio, con `GNU_SOURCE`, la función retornar un `char*` y no
+ * necesariamente podrán el mensaje de error en el buffer sino como retorno.
+ * (véase más abajo), lo cual esta claramente mal.
+ *
+ * Estos "un-define" están para forzar el uso de POSIX y sacar `GNU_SOURCE`
+ * al menos en este `.cpp`.
+ * */
+#undef _GNU_SOURCE
+#undef GNU_SOURCE
+
+#include "liberror.h"
+#include <string.h>
+#include <errno.h>
+#include <cstdio>
+#include <cstdarg>
+#include <cstring>
+
+LibError::LibError(int error_code, const char* fmt, ...) noexcept {
+    /* Aquí empieza la magia arcana proveniente de C.
+     *
+     * En C (y en C++) las funciones y métodos pueden recibir un número
+     * arbitrario de argumentos. Esto se especifica con las elipsis
+     * en la firma de la función.
+     *
+     * Tanto `error_code` como `fmt` son argumentos formales. A continuación
+     * le siguen cero o más argumentos, los llamados variadicos.
+     *
+     * Internamente los argumentos variadicos son cargados en el stack
+     * y para marcar el principio de estos debemos llamar `va_start`
+     * con el nombre del ultimó parámetro formal conocido, `fmt` en
+     * este caso.
+     * */
+    va_list args;
+    va_start(args, fmt);
+
+    /*
+     * `vsnprintf` es una función similar a `printf` que guarda en
+     * un buffer `msg_error` el string `fmt` formateado con los
+     * argumentos variadicos `args`.
+     *
+     * Para evitar overflows le pasamos el límite del buffer.
+     * La documentación oficial indica que `vsnprintf` escribirá
+     * a lo sumo esa cantidad de bytes incluyendo el `\0`.
+     * */
+    int s = vsnprintf(msg_error, sizeof(msg_error), fmt, args);
+
+    /* Una vez que hemos usado los argumentos variadicos hay que liberarlos.
+     * Conceptualmente es como si estuvieran guardados en una lista
+     * aunque internamente están en el stack del programa.
+     * */
+    va_end(args);
+
+    if (s < 0) {
+        /* Algo falló al llamar a `vsnprintf` pero no podemos hacer nada.
+         *
+         * Lanzar una excepción no es una opción: `LibError` es una excepción
+         * en sí y es altamente probable que este constructor se este llamando
+         * por que hay una excepción en curso y lanzar otra excepción cuando
+         * hay otra en curso hara que el programa de C++ aborte.
+         *
+         * Otros lenguajes no son tan catastróficos: Java y Python simplemente
+         * encadenan la excepción original y la nueva y continúan la propagación
+         * del error.
+         *
+         * Pero en C++ no es así. Prefiero entonces simplemente ignorar el error
+         * poniendo algún mensaje dummy.
+         * */
+        msg_error[0] = msg_error[1] = msg_error[2] = '?';
+        msg_error[3] = ' ';
+        msg_error[4] = '\0';
+
+        /*
+         * `vsnprintf` retorna la cantidad de bytes escritos sin incluir el `\0`
+         * Por lo tanto, si nosotros escribimos artificialmente `"??? \0"`
+         * debemos indicar 4 bytes y no 5 ya que no debemos contar el `\0`
+         * */
+        s = 4;
+    } else if (s == sizeof(msg_error)) {
+        /* Esto también técnicamente es un error ya que el mensaje formateado
+         * fue más grande que el buffer `msg_error`.
+         * No hubo un overflow pero el mensaje en `msg_error` esta truncado.
+         *
+         * En otros contextos yo lanzaría una excepción pero por lo mencionado
+         * anteriormente simplemente ignorare el error.
+         * */
+    }
+
+    /*
+     * `strerror_r` toma el `error_code` y lo traduce a un mensaje entendible
+     * por el humano y lo escribe en el buffer. A diferencia de `strerror`,
+     * `strerror_r` es thread safe ya que usa un buffer local (`msg_error`)
+     * y no uno `static` (aka, global).
+     *
+     * Nótese como `msg_error+s` apunta justo al `\0` escrito por `vsnprintf`
+     * y es exactamente lo que queremos: queremos escribir a continuación
+     * de lo escrito por `vsnprintf` pisándole el `\0`.
+     * */
+    strerror_r(error_code, msg_error+s, sizeof(msg_error)-s);
+
+    /*
+     * `strerror_r` garantiza que el string termina siempre en un `\0`
+     * sin embargo permitime ser un poco paranoico y asegurarme que
+     * realmente hay un `\0` al final.
+     * */
+    msg_error[sizeof(msg_error)-1] = 0;
+}
+
+const char* LibError::what() const noexcept {
+    return msg_error;
+}
+
+LibError::~LibError() {}
+
+
+//////// liberror.h /////////////
+
+#ifndef LIB_ERROR_H
+#define LIB_ERROR_H
+
+#include <exception>
+
+/*
+ * Clase para encapsular el `errno` de C, "el ultimó error".
+ * Es una excepción genérica que se encarga de los detalles
+ * de decodificar el `errno` en un mensaje más entendible.
+ * */
+class LibError : public std::exception {
+    char msg_error[256];
+
+    public:
+    /*
+     * Dado que `errno` es una variable global y puede ser modificada por
+     * cualquier función, hay que hacer una copia apenas se haya detectado
+     * el error, para luego lanzar `LibError` o bien lanzar `LibError` apenas
+     * ya se haya detectado el error.
+     *
+     * El constructor `LibError` es variadico y recibe, ademas del `errno`,
+     * un format-string (como `printf`) y cero o más argumentos que
+     * formaran parte del mensaje.
+     *
+     * int ret = foo();
+     * if (ret == -1)
+     *      throw LibError(errno, "The function %s has failed: ", "foo");
+     *  */
+    LibError(int error_code, const char* fmt, ...) noexcept;
+
+    virtual const char* what() const noexcept;
+
+    virtual ~LibError();
+};
+
+#endif
+
+//////// resolver.cpp /////////////
+
+#include "resolver.h"
+#include "resolvererror.h"
+#include "liberror.h"
+
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
+
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <unistd.h>
+
+#include <stdexcept>
+
+Resolver::Resolver(
+        const char* hostname,
+        const char* servname,
+        bool is_passive) {
+    struct addrinfo hints;
+    this->result = this->_next = nullptr;
+
+    /*
+     * `getaddrinfo` nos resuelve el nombre de una máquina (host) y de un
+     * servicio a una dirección.
+     * Nos puede retornar múltiples direcciones incluso de
+     * protocolos/tecnologías que no nos interesan.
+     * Para pre-seleccionar que direcciones nos interesan le pasamos
+     * un hint, una estructura con algunos campos completados (no todos)
+     * que le indicaran que tipo de direcciones queremos.
+     *
+     * Para nuestros fines queremos direcciones de internet IPv4
+     * y para servicios de TCP.
+     * */
+    memset(&hints, 0, sizeof(struct addrinfo));
+    hints.ai_family = AF_INET;       /* IPv4 (or AF_INET6 for IPv6)     */
+    hints.ai_socktype = SOCK_STREAM; /* TCP  (or SOCK_DGRAM for UDP)    */
+    hints.ai_flags = is_passive ? AI_PASSIVE : 0;
+
+    /* Obtengo la (o las) direcciones según el nombre de host y servicio que
+     * busco
+     *
+     * De todas las direcciones posibles, solo me interesan aquellas que sean
+     * IPv4 y TCP (según lo definido en hints)
+     *
+     * El resultado lo guarda en result que es un puntero al primer nodo
+     * de una lista simplemente enlazada.
+     * */
+    int s = getaddrinfo(hostname, servname, &hints, &this->result);
+
+    /* Es muy importante chequear los errores.
+     *
+     * En C, Golang, Rust, la forma de comunicar errores al caller (a quien
+     * nos llamó) es retornando un código de error.
+     *
+     * La página de manual de `getaddrinfo` aclara que si `s == 0`
+     * entonces todo salio bien.
+     *
+     * Si `s == EAI_SYSTEM` entonces el error es del sistema y deberemos
+     * inspeccionar la variable global `errno`.
+     *
+     * Si `s != EAI_SYSTEM`, entonces el valor de retorno debe ser
+     * inspeccionado con `gai_strerror`.
+     * */
+    if (s != 0) {
+        if (s == EAI_SYSTEM) {
+            /*
+             * Como `errno` es global y puede ser modificada por *cualquier* otra
+             * función, es *importantísimo* copiarla apenas detectemos el error.
+             *
+             * En este caso, `LibError` lo hara por nosotros.
+             */
+            throw LibError(
+                    errno,
+                    "Name resolution failed for hostname '%s' y servname '%s'",
+                    (hostname ? hostname : ""),
+                    (servname ? servname : ""));
+
+        } else {
+            /*
+             * La documentación de `getaddrinfo` dice que en este caso
+             * debemos usar `gai_strerror` para obtener el mensaje de error.
+             * */
+            throw ResolverError(s);
+        }
+    }
+
+    this->_next = this->result;
+}
+
+Resolver::Resolver(Resolver&& other) {
+    /* Nos copiamos del otro resolver... */
+    this->result = other.result;
+    this->_next = other._next;
+
+    /* ...pero luego le sacamos al otro resolver
+     * el ownership del recurso.
+     * Efectivamente el ownership pasó de él
+     * a nosotros: el ownership se movió.
+     *
+     * En el caso de `Resolver` podemos marcar los
+     * punteros como `nullptr`.
+     * Tendremos que chequear en el destructor `~Resolver`
+     * este caso y evitar llamar a `freeaddrinfo` si es `nullptr`.
+     * */
+    other.result = nullptr;
+    other._next = nullptr;
+}
+
+Resolver& Resolver::operator=(Resolver&& other) {
+    /* Si el usuario hace algo como tratar de moverse
+     * a si mismo (`resolver = resolver;`) simplemente no hacemos
+     * nada.
+     * */
+    if (this == &other)
+        return *this;
+
+    /* A diferencia del constructor por movimiento,
+     * `this` (nosotros) es un resolver completamente creado
+     * y debemos desinicializarlo primero antes de pisarle
+     * el recurso con el que le robaremos al otro resolver (`other`)
+     * */
+    if (this->result)
+        freeaddrinfo(this->result);
+
+    /* Ahora hacemos los mismos pasos que en el move constructor */
+    this->result = other.result;
+    this->_next = other._next;
+    other.result = nullptr;
+    other._next = nullptr;
+
+    return *this;
+}
+
+bool Resolver::has_next() {
+    chk_addr_or_fail();
+    return this->_next != NULL;
+}
+
+struct addrinfo* Resolver::next() {
+    chk_addr_or_fail();
+    struct addrinfo *ret = this->_next;
+    this->_next = ret->ai_next;
+    return ret;
+}
+
+Resolver::~Resolver() {
+    /*
+     * `getaddrinfo` reservó recursos en algún lado (posiblemente el heap).
+     * Es nuestra obligación liberar dichos recursos cuando no los necesitamos
+     * más.
+     *
+     * La manpage dice q debemos usar `freeaddrinfo` para ello y
+     * así lo hacemos.
+     * */
+    if (this->result)
+        freeaddrinfo(this->result);
+}
+
+
+void Resolver::chk_addr_or_fail() const {
+    if (result == nullptr) {
+        throw std::runtime_error(
+                "addresses list is invalid (null), "
+                "perhaps you are using a *previously moved* "
+                "resolver (and therefore invalid)."
+                );
+    }
+}
+
+//////// resolvererror.cpp /////////////
+
+#include "resolvererror.h"
+
+#include <sys/types.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+
+ResolverError::ResolverError(int gai_errno) : gai_errno(gai_errno) { }
+
+const char* ResolverError::what() const noexcept {
+    return gai_strerror(gai_errno);
+}
+
+ResolverError::~ResolverError() {}
+
+//////// resolvererror.h /////////////
+
+#ifndef RESOLVER_ERROR_H
+#define RESOLVER_ERROR_H
+
+#include <exception>
+
+/*
+ * Clase que encapsula un "gai" error. Vease getaddrinfo()
+ * */
+class ResolverError : public std::exception {
+    private:
+    int gai_errno;
+
+    public:
+    explicit ResolverError(int gai_errno);
+
+    virtual const char* what() const noexcept;
+
+    /*
+     * Siempre que heredemos debemos hacer a nuestros
+     * destructores polimórficos (`virtual`)
+     *
+     * Esto garantiza que será llamado.
+     * */
+    virtual ~ResolverError();
+};
+#endif
+
+//////// resolver.h /////////////
+
+#ifndef RESOLVER_H
+#define RESOLVER_H
+
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netdb.h>
+
+/*
+ * "Resolvedor" de hostnames y service names.
+ *
+ * Por simplificación este TDA se enfocara solamente
+ * en direcciones IPv4 para TCP.
+ * */
+class Resolver {
+    private:
+    struct addrinfo *result;
+    struct addrinfo *_next;
+
+    /*
+     * Checkea que la lista de direcciones (result) sea "valida".
+     *
+     * No hace un checkeo muy exhaustivo, simplemente verifica que
+     * no sea null.
+     *
+     * En un object RAII como este, el atributo result esta siempre
+     * bien definido (distinto de -1) **salvo** cuando es movido.
+     *
+     * Este check es para ayudarte a detectar ese caso y lanzar una
+     * excepción. No es lo más bonito del universo pero te dará una
+     * pista de que puede estar andando mal.
+     * */
+    void chk_addr_or_fail() const;
+
+    public:
+/* Crea el objeto y resuelve el dado nombre del host y servicio.
+ *
+ * Si `is_passive` es `true` y `hostname` es `nullptr`,
+ * las direcciones retornadas serán aptas para hacer un `bind`
+ * y poner al socket en modo escucha para recibir conexiones.
+ *
+ * En caso de error se lanza una excepción.
+ * */
+Resolver(
+        const char* hostname,
+        const char* servname,
+        bool is_passive);
+
+/*
+ * Deshabilitamos el constructor por copia y operador asignación por copia
+ * ya que no queremos que se puedan copiar objetos `Resolver`.
+ *
+ * Se podrían copiar?, sí, pero no le veo mucha utilidad y prefiero
+ * evitarlo.
+ * */
+Resolver(const Resolver&) = delete;
+Resolver& operator=(const Resolver&) = delete;
+
+/*
+ * Hacemos que el `Resolver` sea movible.
+ * */
+Resolver(Resolver&&);
+Resolver& operator=(Resolver&&);
+
+/* Retorna si hay o no una dirección siguiente para testear.
+ * Si la hay, se deberá llamar a `Resolver::next()` para obtenerla.
+ *
+ * Si no la hay se puede asumir que el resolver está extinguido.
+ * */
+bool has_next();
+
+/* Retorna la siguiente dirección para testear e internamente
+ * mueve el iterador a la siguiente dirección.
+ *
+ * Si no existe una siguiente dirección el resultado es indefinido.
+ * */
+struct addrinfo* next();
+
+/*
+ * Libera los recursos.
+ * */
+~Resolver();
+};
+#endif
+
