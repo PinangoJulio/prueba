@@ -53,8 +53,10 @@ void Client::load_and_execute_commands(const std::string& filename) {
                                  std::to_string(response));
     }
     uint32_t money = protocol.recv_initial_money();
-    // El dinero viene en centavos del protocolo, convertir a pesos para mostrar
-    std::cout << "Initial balance: " << (money / 100) << std::endl;
+
+    // CLAVE: El servidor ahora envía el dinero en pesos, no en centavos
+    // Por lo tanto NO dividir por 100
+    std::cout << "Initial balance: " << money << std::endl;
 
     // TERCERO: reiniciar y ejecutar todos los comandos
     file.clear();
@@ -77,6 +79,8 @@ void Client::load_and_execute_commands(const std::string& filename) {
         }
     }
 }
+
+
 void Client::execute_command(const std::string& command, const std::string& parameter) {
     if (command == "get_current_car") {
         request_current_car();
@@ -125,12 +129,15 @@ void Client::request_buy_car(const std::string& car_name) {
 
     if (command == SEND_CAR_BOUGHT) {
         auto [car, remaining_money] = protocol.recv_car_bought();
-        // Los precios vienen en centavos, convertir a pesos para mostrar
+
+        // Los precios de autos vienen en centavos, convertir a pesos para mostrar
         std::cout << "Car bought: " << car.name << ", year: " << car.year
                   << ", price: " << std::fixed << std::setprecision(2) << (car.price / 100.0f)
                   << std::endl;
-        // El dinero restante viene en centavos, convertir a pesos
-        std::cout << "Remaining balance: " << (remaining_money / 100) << std::endl;
+
+        // El dinero restante viene en pesos (no dividir por 100)
+        std::cout << "Remaining balance: " << remaining_money << std::endl;
+
     } else if (command == SEND_ERROR_MESSAGE) {
         std::string error = protocol.recv_error_message();
         std::cout << "Error: " << error << std::endl;
@@ -152,5 +159,4 @@ void Client::print_car_info(const Car& car, const std::string& prefix) {
     std::cout << prefix << car.name << ", year: " << car.year << ", price: " << std::fixed
               << std::setprecision(2) << (car.price / 100.0f) << std::endl;
 }
-
 void Client::run() {}

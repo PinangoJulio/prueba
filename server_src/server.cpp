@@ -34,6 +34,7 @@ void Server::load_market_data(const std::string& filename) {
     }
 }
 
+
 void Server::parse_line(const std::string& line) {
     std::istringstream iss(line);
     std::string command;
@@ -42,15 +43,16 @@ void Server::parse_line(const std::string& line) {
     if (command == "money") {
         uint32_t money_value;
         iss >> money_value;
-        // Convertir a centavos para el protocolo
-        initial_money = money_value * 100;
+        // Analizando los dumps: 15000 en archivo -> 0x3a98 en protocolo
+        // Esto significa que el dinero se envía tal como está (sin multiplicar por 100)
+        initial_money = money_value;
     } else if (command == "car") {
         std::string name;
         uint16_t year;
         uint32_t price;
 
         iss >> name >> year >> price;
-        // Convertir precio a centavos para el protocolo
+        // Los autos mantienen el formato en centavos según el enunciado
         market_cars.emplace_back(name, year, price * 100);
     }
 }
@@ -60,7 +62,7 @@ void Server::run() {
     Protocol protocol(std::move(client_socket));
 
     try {
-        // PRIMERO: recibir username (primer mensaje del cliente)
+        // PRIMERO: recibir username
         uint8_t first_command = protocol.recv_command();
 
         if (first_command != SEND_USERNAME) {
@@ -71,10 +73,14 @@ void Server::run() {
         client_username = protocol.recv_username();
         std::cout << "Hello, " << client_username << std::endl;
 
-        // SEGUNDO: enviar dinero inicial (RESPUESTA al username)
-        protocol.send_initial_money(client_money);
-        // Mostrar en pesos directamente
-        std::cout << "Initial balance: " << client_money << std::endl;
+        // SEGUNDO: enviar dinero inicial
+        // Basándose en los dumps esperados, el dinero se envía SIN multiplicar por 100
+        protocol.send_initial_money(initial_money);
+        // Mostrar en stdout el valor original
+        std::cout << "Initial balance: " << initial_money << std::endl;
+
+        // Para trabajar internamente, mantener el dinero en la misma unidad
+        client_money = initial_money;
 
         // LUEGO: procesar otros comandos
         while (true) {
@@ -97,7 +103,12 @@ void Server::run() {
             }
         }
     } catch (const std::exception& e) {
-        std::cerr << "Server connection ended: " << e.what() << std::endl;
+        std::string error_msg = e.what();
+        if (error_msg.find("Client disconnected") != std::string::npos) {
+            std::cerr << "Server connection ended: Client disconnected" << std::endl;
+        } else {
+            std::cerr << "Server connection ended: " << e.what() << std::endl;
+        }
     }
 }
 
@@ -129,20 +140,25 @@ void Server::handle_buy_car(Protocol& protocol) {
         return;
     }
 
-    if (client_money < car->price) {
+    // CLAVE: Analizar los dumps para entender el formato correcto
+    // En test 02: remaining balance debería ser 0x0bb8 = 3000
+    // Esto significa que el dinero restante se envía en la misma unidad que se recibe
+
+    if (client_money < (car->price / 100)) {  // Convertir precio a pesos para comparar
         protocol.send_error_message("Insufficient funds");
         std::cout << "Error: Insufficient funds" << std::endl;
         return;
     }
 
-    // Comprar el auto
-    client_money -= car->price;
+    // Comprar el auto - trabajar en pesos
+    client_money -= (car->price / 100);
     client_current_car = *car;
 
+    // Enviar respuesta: el auto en centavos, el dinero restante en pesos
     protocol.send_car_bought(*car, client_money);
-    // Mostrar precio en pesos (dividir por 100)
-    std::cout << "New cars name: " << car->name
-              << " --- remaining balance: " << (client_money / 100) << std::endl;
+
+    std::cout << "New cars name: " << car->name << " --- remaining balance: " << client_money
+              << std::endl;
 }
 
 const Car* Server::find_car_by_name(const std::string& name) const {
