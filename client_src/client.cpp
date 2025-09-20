@@ -34,7 +34,10 @@ void Client::load_and_execute_commands(const std::string& filename) {
             if (command == "username") {
                 std::string username_param;
                 iss >> username_param;
-                protocol.send_username(username_param);
+
+                // NUEVO: Trabajar con DTOs
+                UserDto user(username_param);
+                protocol.send_user_registration(user);
                 username_sent = true;
                 break;
             }
@@ -45,18 +48,15 @@ void Client::load_and_execute_commands(const std::string& filename) {
         throw std::runtime_error("No username command found in file");
     }
 
-    // SEGUNDO: recibir dinero inicial del servidor (RESPUESTA al username)
-    uint8_t response = protocol.recv_command();
-
+    // SEGUNDO: recibir dinero inicial del servidor
+    uint8_t response = protocol.receive_command();
     if (response != SEND_INITIAL_MONEY) {
-        throw std::runtime_error("Expected initial money from server (0x02), got: 0x" +
-                                 std::to_string(response));
+        throw std::runtime_error("Expected initial money from server");
     }
-    uint32_t money = protocol.recv_initial_money();
 
-    // CLAVE: El servidor ahora envía el dinero en pesos, no en centavos
-    // Por lo tanto NO dividir por 100
-    std::cout << "Initial balance: " << money << std::endl;
+    // NUEVO: Recibir como DTO
+    MoneyDto initial_money = protocol.receive_initial_balance();
+    std::cout << "Initial balance: " << initial_money.amount << std::endl;
 
     // TERCERO: reiniciar y ejecutar todos los comandos
     file.clear();
@@ -80,7 +80,6 @@ void Client::load_and_execute_commands(const std::string& filename) {
     }
 }
 
-
 void Client::execute_command(const std::string& command, const std::string& parameter) {
     if (command == "get_current_car") {
         request_current_car();
@@ -94,69 +93,69 @@ void Client::execute_command(const std::string& command, const std::string& para
 }
 
 void Client::request_current_car() {
-    protocol.send_get_current_car();
+    protocol.send_current_car_request();
 
-    uint8_t command = protocol.recv_command();
+    uint8_t command = protocol.receive_command();
 
     if (command == SEND_CURRENT_CAR) {
-        Car current_car = protocol.recv_current_car();
+        // NUEVO: Recibir como DTO
+        CarDto current_car = protocol.receive_current_car_info();
         print_car_info(current_car, "Current car: ");
     } else if (command == SEND_ERROR_MESSAGE) {
-        std::string error = protocol.recv_error_message();
-        std::cout << "Error: " << error << std::endl;
+        // NUEVO: Recibir error como DTO
+        ErrorDto error = protocol.receive_error_notification();
+        std::cout << "Error: " << error.message << std::endl;
     } else {
-        throw std::runtime_error("Unexpected response from server: 0x" + std::to_string(command));
+        throw std::runtime_error("Unexpected response from server");
     }
 }
 
 void Client::request_market_info() {
-    protocol.send_get_market_info();
+    protocol.send_market_info_request();
 
-    uint8_t command = protocol.recv_command();
+    uint8_t command = protocol.receive_command();
     if (command != SEND_MARKET_INFO) {
-        throw std::runtime_error("Expected market info from server, got: 0x" +
-                                 std::to_string(command));
+        throw std::runtime_error("Expected market info from server");
     }
 
-    std::vector<Car> cars = protocol.recv_market_info();
-    print_market_info(cars);
+    // NUEVO: Recibir como DTO
+    MarketDto market = protocol.receive_market_catalog();
+    print_market_info(market.cars);
 }
 
 void Client::request_buy_car(const std::string& car_name) {
-    protocol.send_buy_car(car_name);
+    protocol.send_car_purchase_request(car_name);
 
-    uint8_t command = protocol.recv_command();
+    uint8_t command = protocol.receive_command();
 
     if (command == SEND_CAR_BOUGHT) {
-        auto [car, remaining_money] = protocol.recv_car_bought();
+        // NUEVO: Recibir como DTO
+        CarPurchaseDto purchase = protocol.receive_purchase_confirmation();
 
-        // Los precios de autos vienen en centavos, convertir a pesos para mostrar
-        std::cout << "Car bought: " << car.name << ", year: " << car.year
-                  << ", price: " << std::fixed << std::setprecision(2) << (car.price / 100.0f)
-                  << std::endl;
-
-        // El dinero restante viene en pesos (no dividir por 100)
-        std::cout << "Remaining balance: " << remaining_money << std::endl;
+        std::cout << "Car bought: " << purchase.car.name << ", year: " << purchase.car.year
+                  << ", price: " << std::fixed << std::setprecision(2)
+                  << (purchase.car.price / 100.0f) << std::endl;
+        std::cout << "Remaining balance: " << purchase.remaining_money << std::endl;
 
     } else if (command == SEND_ERROR_MESSAGE) {
-        std::string error = protocol.recv_error_message();
-        std::cout << "Error: " << error << std::endl;
+        // NUEVO: Recibir error como DTO
+        ErrorDto error = protocol.receive_error_notification();
+        std::cout << "Error: " << error.message << std::endl;
     } else {
-        throw std::runtime_error("Unexpected response from server: 0x" + std::to_string(command));
+        throw std::runtime_error("Unexpected response from server");
     }
 }
 
-void Client::print_market_info(const std::vector<Car>& cars) {
+void Client::print_market_info(const std::vector<CarDto>& cars) {
     for (const auto& car: cars) {
-        // Los precios vienen en centavos, convertir a pesos
         std::cout << car.name << ", year: " << car.year << ", price: " << std::fixed
                   << std::setprecision(2) << (car.price / 100.0f) << std::endl;
     }
 }
 
-void Client::print_car_info(const Car& car, const std::string& prefix) {
-    // Los precios vienen en centavos, convertir a pesos
+void Client::print_car_info(const CarDto& car, const std::string& prefix) {
     std::cout << prefix << car.name << ", year: " << car.year << ", price: " << std::fixed
               << std::setprecision(2) << (car.price / 100.0f) << std::endl;
 }
+
 void Client::run() {}

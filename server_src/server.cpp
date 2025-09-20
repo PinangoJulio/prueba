@@ -34,7 +34,6 @@ void Server::load_market_data(const std::string& filename) {
     }
 }
 
-
 void Server::parse_line(const std::string& line) {
     std::istringstream iss(line);
     std::string command;
@@ -43,8 +42,6 @@ void Server::parse_line(const std::string& line) {
     if (command == "money") {
         uint32_t money_value;
         iss >> money_value;
-        // Analizando los dumps: 15000 en archivo -> 0x3a98 en protocolo
-        // Esto significa que el dinero se envía tal como está (sin multiplicar por 100)
         initial_money = money_value;
     } else if (command == "car") {
         std::string name;
@@ -52,8 +49,8 @@ void Server::parse_line(const std::string& line) {
         uint32_t price;
 
         iss >> name >> year >> price;
-        // Los autos mantienen el formato en centavos según el enunciado
-        market_cars.emplace_back(name, year, price * 100);
+        // RAII aplicado: constructor apropiado
+        market_cars.emplace_back(name, year, price * 100);  // precio en centavos
     }
 }
 
@@ -62,39 +59,22 @@ void Server::run() {
     Protocol protocol(std::move(client_socket));
 
     try {
-        // PRIMERO: recibir username
-        uint8_t first_command = protocol.recv_command();
+        // PRIMERO: manejar registro de usuario
+        handle_user_registration(protocol);
 
-        if (first_command != SEND_USERNAME) {
-            throw std::runtime_error("Expected username as first message (0x01), got: 0x" +
-                                     std::to_string(first_command));
-        }
-
-        client_username = protocol.recv_username();
-        std::cout << "Hello, " << client_username << std::endl;
-
-        // SEGUNDO: enviar dinero inicial
-        // Basándose en los dumps esperados, el dinero se envía SIN multiplicar por 100
-        protocol.send_initial_money(initial_money);
-        // Mostrar en stdout el valor original
-        std::cout << "Initial balance: " << initial_money << std::endl;
-
-        // Para trabajar internamente, mantener el dinero en la misma unidad
-        client_money = initial_money;
-
-        // LUEGO: procesar otros comandos
+        // LUEGO: procesar comandos del negocio
         while (true) {
-            uint8_t command = protocol.recv_command();
+            uint8_t command = protocol.receive_command();
 
             switch (command) {
                 case GET_CURRENT_CAR:
-                    handle_get_current_car(protocol);
+                    handle_current_car_request(protocol);
                     break;
                 case GET_MARKET_INFO:
-                    handle_get_market_info(protocol);
+                    handle_market_info_request(protocol);
                     break;
                 case BUY_CAR:
-                    handle_buy_car(protocol);
+                    handle_car_purchase_request(protocol);
                     break;
                 default:
                     std::cerr << "Unknown command received: 0x" << std::hex << (int)command
@@ -112,40 +92,67 @@ void Server::run() {
     }
 }
 
-void Server::handle_get_current_car(Protocol& protocol) {
+// ==== HANDLERS QUE TRABAJAN CON DTOs ====
+
+void Server::handle_user_registration(Protocol& protocol) {
+    uint8_t first_command = protocol.receive_command();
+
+    if (first_command != SEND_USERNAME) {
+        throw std::runtime_error("Expected username as first message");
+    }
+
+    // NUEVO: Recibir como DTO
+    UserDto user = protocol.receive_user_registration();
+    client_username = user.username;
+    std::cout << "Hello, " << client_username << std::endl;
+
+    // NUEVO: Enviar dinero como DTO
+    MoneyDto initial_balance(initial_money);
+    protocol.send_initial_balance(initial_balance);
+    std::cout << "Initial balance: " << initial_money << std::endl;
+
+    client_money = initial_money;
+}
+
+void Server::handle_current_car_request(Protocol& protocol) {
     if (client_current_car.has_value()) {
-        protocol.send_current_car(client_current_car.value());
+        // NUEVO: Enviar auto como DTO
+        protocol.send_current_car_info(client_current_car.value());
+
         // Mostrar precio en pesos (dividir por 100)
         std::cout << "Car " << client_current_car->name << " " << (client_current_car->price / 100)
                   << " " << client_current_car->year << " sent" << std::endl;
     } else {
-        protocol.send_error_message("No car bought");
+        // NUEVO: Enviar error como DTO
+        ErrorDto error("No car bought");
+        protocol.send_error_notification(error);
         std::cout << "Error: No car bought" << std::endl;
     }
 }
 
-
-void Server::handle_get_market_info(Protocol& protocol) {
-    protocol.send_market_info(market_cars);
+void Server::handle_market_info_request(Protocol& protocol) {
+    // NUEVO: Enviar market como DTO
+    MarketDto market(market_cars);
+    protocol.send_market_catalog(market);
     std::cout << market_cars.size() << " cars sent" << std::endl;
 }
 
-void Server::handle_buy_car(Protocol& protocol) {
-    std::string car_name = protocol.recv_buy_car();
+void Server::handle_car_purchase_request(Protocol& protocol) {
+    // NUEVO: Recibir nombre del auto directamente (no como DTO porque es un parámetro simple)
+    std::string car_name = protocol.receive_car_purchase_request();
 
-    const Car* car = find_car_by_name(car_name);
+    const CarDto* car = find_car_by_name(car_name);
     if (car == nullptr) {
-        protocol.send_error_message("Car not found");
+        ErrorDto error("Car not found");
+        protocol.send_error_notification(error);
         std::cout << "Error: Car not found" << std::endl;
         return;
     }
 
-    // CLAVE: Analizar los dumps para entender el formato correcto
-    // En test 02: remaining balance debería ser 0x0bb8 = 3000
-    // Esto significa que el dinero restante se envía en la misma unidad que se recibe
-
-    if (client_money < (car->price / 100)) {  // Convertir precio a pesos para comparar
-        protocol.send_error_message("Insufficient funds");
+    // Verificar fondos (convertir precio a pesos para comparar)
+    if (client_money < (car->price / 100)) {
+        ErrorDto error("Insufficient funds");
+        protocol.send_error_notification(error);
         std::cout << "Error: Insufficient funds" << std::endl;
         return;
     }
@@ -154,16 +161,17 @@ void Server::handle_buy_car(Protocol& protocol) {
     client_money -= (car->price / 100);
     client_current_car = *car;
 
-    // Enviar respuesta: el auto en centavos, el dinero restante en pesos
-    protocol.send_car_bought(*car, client_money);
+    // NUEVO: Enviar confirmación como DTO
+    CarPurchaseDto purchase(*car, client_money);
+    protocol.send_purchase_confirmation(purchase);
 
     std::cout << "New cars name: " << car->name << " --- remaining balance: " << client_money
               << std::endl;
 }
 
-const Car* Server::find_car_by_name(const std::string& name) const {
+const CarDto* Server::find_car_by_name(const std::string& name) const {
     auto it = std::find_if(market_cars.begin(), market_cars.end(),
-                           [&name](const Car& car) { return car.name == name; });
+                           [&name](const CarDto& car) { return car.name == name; });
 
     if (it != market_cars.end()) {
         return &(*it);

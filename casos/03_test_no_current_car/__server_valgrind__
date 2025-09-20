@@ -1,0 +1,29 @@
+==00:00:00:00.000 218602== Memcheck, a memory error detector
+==00:00:00:00.000 218602== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==00:00:00:00.000 218602== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
+==00:00:00:00.000 218602== Command: ./server 1504 03_server.txt
+==00:00:00:00.000 218602== Parent PID: 218600
+==00:00:00:00.000 218602== 
+==00:00:00:01.441 218602== 
+==00:00:00:01.441 218602== FILE DESCRIPTORS: 7 open (3 std) at exit.
+==00:00:00:01.441 218602== Open file descriptor 103: /usr/share/code/v8_context_snapshot.bin
+==00:00:00:01.441 218602==    <inherited from parent>
+==00:00:00:01.441 218602== 
+==00:00:00:01.441 218602== Open file descriptor 37: /home/julio/.config/Code/logs/20250917T224348/ptyhost.log
+==00:00:00:01.441 218602==    <inherited from parent>
+==00:00:00:01.441 218602== 
+==00:00:00:01.441 218602== Open AF_UNIX socket 36: <unknown>
+==00:00:00:01.441 218602==    <inherited from parent>
+==00:00:00:01.441 218602== 
+==00:00:00:01.441 218602== Open file descriptor 3: /home/julio/Escritorio/Taller prueba/sockets-2025c2-PinangoJulio/casos/03_test_no_current_car/__server_valgrind__
+==00:00:00:01.441 218602==    <inherited from parent>
+==00:00:00:01.441 218602== 
+==00:00:00:01.441 218602== 
+==00:00:00:01.441 218602== HEAP SUMMARY:
+==00:00:00:01.441 218602==     in use at exit: 0 bytes in 0 blocks
+==00:00:00:01.441 218602==   total heap usage: 15 allocs, 15 frees, 86,965 bytes allocated
+==00:00:00:01.441 218602== 
+==00:00:00:01.441 218602== All heap blocks were freed -- no leaks are possible
+==00:00:00:01.441 218602== 
+==00:00:00:01.441 218602== For lists of detected and suppressed errors, rerun with: -s
+==00:00:00:01.441 218602== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

@@ -1,0 +1,40 @@
+Ok, hoy en la clase el profesor dijo que habia revisado algunos tp y creo que hay que cambiar algunas cosas, igual te voy a pasar las notas de lo que esuché que dije, puede que hayan cosas sin  sentido pero intenté copiar lo mas rapido posible. Te voy a pasar lo que dijeron y vamos a ver qué errores de implementacion tenemos y luego ver los que cumplimos. esto fue lo que se dijo: El protocolo debe recibir un struct de to
+Y retorne un struct
+ Cosas que puede entender el negocio
+Llamar send all desde protocol
+Serializar en protocol
+Por ejemplo le paso el car
+O pasarle username
+NO pasarle la línea que se leyó
+El dia de mañana no escribiremos en stdout, usaremos unas GUI. Y el protocolo no va a cambiar
+Si en vez de tener un protocolo binario queremos usar un protocolo de texto, el negocio no cambia!
+El protocolo recibe el username o el auto
+Y luego lo serializa
+Aplicar RAII
+Evitar crear el car sin inicializar
+Interfaz del protocolo: qué problemas ven?
+void Protocol::send(Socket socket, std::string msg);
+std::string Protocol::recv(Socket& socket);
+Problemas:
+Pasaje del socket en cada método del protocolo
+Pasaje por copia de string
+Metodos no descrptivos
+El protocolo esta enviando y recibiendo tiras de bytes (strings) en vez de DTOs
+Ejemplo de código mal hecho: 
+RequesType request;
+while ((request = prot.next_request_type()) != RequestType::Closed) {
+    if (request == RequestType::BuyCar) {
+        process_buy_car_request(prot);
+    } else if (request == RequestType::GetCurrentCar) {
+        process_get_current_car_request(prot);
+    } else if (request == RequestType::GetMarketInfo) {
+        process_get_market_info_request(prot);
+    }
+}
+Esta esto esta MAL, hace 2 o llamadas al protocolo . el mensaje es 1. No deben ser 2 llamadas al protocolo
+No es bueno mandar el precio, el tamaño, y Todo por separado a través del socket
+(Posible idea del profesor: pueden usar memcopy)
+No llamar mas de 1 vez a send_all
+Mejor crearse un Buffer. Un único paquete
+( posible Idea del profesor para ese unico buffer, memcopy)
+Endianess: usar ntohs y htons!
